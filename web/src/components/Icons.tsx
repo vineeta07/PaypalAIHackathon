@@ -17,6 +17,16 @@ export const Refresh = (p: SVGProps<SVGSVGElement>) => (<svg {...base(p)}><path 
 export const Lock = (p: SVGProps<SVGSVGElement>) => (<svg {...base(p)}><rect x="5" y="11" width="14" height="10" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg>);
 export const Close = (p: SVGProps<SVGSVGElement>) => (<svg {...base(p)}><path d="M6 6l12 12M18 6L6 18" /></svg>);
 export const Globe = (p: SVGProps<SVGSVGElement>) => (<svg {...base(p)}><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c2.5 2.5 3.8 5.5 3.8 9s-1.3 6.5-3.8 9c-2.5-2.5-3.8-5.5-3.8-9S9.5 5.5 12 3z" /></svg>);
+export const Menu = (p: SVGProps<SVGSVGElement>) => (<svg {...base(p)}><path d="M4 7h16M4 12h16M4 17h16" /></svg>);
+export const Compass = (p: SVGProps<SVGSVGElement>) => (<svg {...base(p)}><circle cx="12" cy="12" r="9" /><path d="M15.5 8.5l-2 5-5 2 2-5z" /></svg>);
+export const Book = (p: SVGProps<SVGSVGElement>) => (<svg {...base(p)}><path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v15H6.5A1.5 1.5 0 0 0 5 19.5zM5 19.5A1.5 1.5 0 0 0 6.5 21H19" /></svg>);
+export const Arrow = (p: SVGProps<SVGSVGElement>) => (<svg {...base(p)}><path d="M5 12h14M13 6l6 6-6 6" /></svg>);
+export const Chevron = (p: SVGProps<SVGSVGElement>) => (<svg {...base(p)}><path d="M9 6l6 6-6 6" /></svg>);
+export const Plus = (p: SVGProps<SVGSVGElement>) => (<svg {...base(p)}><path d="M12 5v14M5 12h14" /></svg>);
+export const Users = (p: SVGProps<SVGSVGElement>) => (<svg {...base(p)}><circle cx="9" cy="8" r="3.5" /><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.2a6.5 6.5 0 0 1 3.5 5.8" /></svg>);
+export const Card2 = (p: SVGProps<SVGSVGElement>) => (<svg {...base(p)}><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M3 10h18M7 15h4" /></svg>);
+export const Split = (p: SVGProps<SVGSVGElement>) => (<svg {...base(p)}><path d="M4 12h6l4-6h6M10 12l4 6h6M17 3l3 3-3 3M17 15l3 3-3 3" /></svg>);
+export const Pen = (p: SVGProps<SVGSVGElement>) => (<svg {...base(p)}><path d="M4 20h4L19 9l-4-4L4 16zM13.5 6.5l4 4" /></svg>);
 export const Calendar = (p: SVGProps<SVGSVGElement>) => (<svg {...base(p)}><rect x="4" y="5" width="16" height="15" rx="2" /><path d="M4 10h16M9 3v4M15 3v4" /></svg>);
 
 export function BakeArt({ kind, className = '' }: { kind: string; className?: string }) {
@@ -32,8 +42,8 @@ export function BakeArt({ kind, className = '' }: { kind: string; className?: st
   );
 }
 export function Avatar({ who, size = 40 }: { who: 'lender' | 'borrower' | 'customer'; size?: number }) {
-  const bg = { lender: '#c7d2fe', borrower: '#fde68a', customer: '#bbf7d0' }[who];
-  const fg = { lender: '#3730a3', borrower: '#92400e', customer: '#166534' }[who];
+  const bg = { lender: '#dfe5ef', borrower: '#f1e4cf', customer: '#dbe9e0' }[who];
+  const fg = { lender: '#2d4670', borrower: '#7a4a12', customer: '#1f5a3c' }[who];
   const letter = { lender: 'M', borrower: 'R', customer: 'C' }[who];
   return (<svg width={size} height={size} viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="20" fill={bg} /><text x="20" y="26" textAnchor="middle" fontSize="17" fontWeight="700" fill={fg} fontFamily="Inter, sans-serif">{letter}</text></svg>);
 }

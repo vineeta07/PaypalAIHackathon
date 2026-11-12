@@ -2,19 +2,40 @@
 @tailwind components;
 @tailwind utilities;
 
-:root { --paper: 250 248 243; --card: 255 255 255; --ink: 23 32 42; --muted: 84 94 106; --line: 228 224 214; --accent: 15 118 110; --accentsoft: 220 242 237; --warm: 180 83 9; --warmsoft: 254 243 224; --danger: 185 28 28; color-scheme: light; }
-.dark { --paper: 15 19 24; --card: 24 30 37; --ink: 236 239 241; --muted: 160 170 180; --line: 46 55 64; --accent: 45 212 191; --accentsoft: 19 56 54; --warm: 251 191 36; --warmsoft: 60 44 16; --danger: 248 113 113; color-scheme: dark; }
+/* Design tokens. Calm, bank-grade palette: warm neutrals + one deep green. */
+:root {
+  --paper: 246 245 241; --card: 255 255 255; --sidebar: 240 239 234; --subtle: 250 249 246;
+  --ink: 24 27 31; --muted: 92 98 107; --line: 226 223 215;
+  --accent: 22 101 67; --accentsoft: 228 240 233; --onaccent: 255 255 255;
+  --warm: 150 84 12; --warmsoft: 250 240 222; --danger: 176 36 26; --info: 38 76 140; --infosoft: 230 237 248;
+  color-scheme: light;
+}
+.dark {
+  --paper: 16 18 20; --card: 23 26 29; --sidebar: 19 21 24; --subtle: 28 31 35;
+  --ink: 232 230 225; --muted: 156 162 170; --line: 45 49 54;
+  --accent: 118 184 146; --accentsoft: 28 45 36; --onaccent: 12 26 18;
+  --warm: 221 168 96; --warmsoft: 50 39 24; --danger: 236 128 114; --info: 150 180 230; --infosoft: 30 38 54;
+  color-scheme: dark;
+}
 html, body { background: rgb(var(--paper)); color: rgb(var(--ink)); }
-body { font-family: Inter, 'Noto Sans Devanagari', system-ui, sans-serif; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
-.card { @apply bg-card rounded-xl2 shadow-soft border border-line/70; }
-.btn { @apply inline-flex items-center justify-center gap-2 text-center rounded-xl min-h-[44px] px-4 font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-paper disabled:opacity-50 disabled:cursor-not-allowed; }
-.btn-primary { @apply btn bg-accent text-white dark:text-[#06201d] hover:brightness-110; }
-.btn-ghost { @apply btn border border-line bg-card text-ink hover:bg-paper; }
-.btn-warn { @apply btn bg-warmsoft text-warm border border-warm/30 hover:brightness-95; }
-.pill { @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold; }
-.label { @apply text-sm font-medium text-muted; }
+body { font-family: Geist, 'Noto Sans Devanagari', system-ui, sans-serif; font-feature-settings: 'ss01', 'cv11'; -webkit-font-smoothing: antialiased; overflow-x: hidden; letter-spacing: -0.005em; }
+h1, h2, h3 { letter-spacing: -0.02em; }
+
+@layer components {
+  .card { @apply rounded-xl2 border border-line bg-card shadow-soft; }
+  .btn { @apply inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg px-4 text-center text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-paper disabled:cursor-not-allowed disabled:opacity-50; }
+  .btn-primary { @apply btn bg-accent text-onaccent hover:bg-accent/90; }
+  .btn-ghost { @apply btn border border-line bg-card text-ink hover:bg-subtle; }
+  .btn-quiet { @apply btn text-muted hover:bg-subtle hover:text-ink; }
+  .btn-warn { @apply btn border border-warm/30 bg-warmsoft text-warm hover:brightness-95; }
+  .pill { @apply inline-flex items-center gap-1 whitespace-nowrap rounded-md px-2 py-0.5 text-xs font-medium; }
+  .label { @apply text-[13px] font-medium text-muted; }
+  .eyebrow { @apply text-xs font-semibold uppercase tracking-[0.08em] text-muted; }
+  .input { @apply min-h-[44px] w-full rounded-lg border border-line bg-card px-3 text-ink placeholder:text-muted/70 focus-visible:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/30; }
+}
 .num { font-variant-numeric: tabular-nums; }
+.mono { font-family: 'Geist Mono', ui-monospace, monospace; }
 a, button, input, textarea, select { -webkit-tap-highlight-color: transparent; }
 :focus-visible { outline: 2px solid rgb(var(--accent)); outline-offset: 2px; }
-@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
-.ag-theme-quartz, .ag-theme-quartz-dark { --ag-font-family: Inter, 'Noto Sans Devanagari', system-ui, sans-serif; --ag-background-color: rgb(var(--card)); --ag-header-background-color: rgb(var(--paper)); --ag-foreground-color: rgb(var(--ink)); --ag-border-color: rgb(var(--line)); --ag-row-hover-color: rgb(var(--accentsoft)); --ag-wrapper-border-radius: 14px; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; } }
+.ag-theme-quartz, .ag-theme-quartz-dark { --ag-font-family: Geist, 'Noto Sans Devanagari', system-ui, sans-serif; --ag-font-size: 13px; --ag-background-color: rgb(var(--card)); --ag-header-background-color: rgb(var(--subtle)); --ag-foreground-color: rgb(var(--ink)); --ag-border-color: rgb(var(--line)); --ag-row-hover-color: rgb(var(--subtle)); --ag-wrapper-border-radius: 12px; --ag-active-color: rgb(var(--accent)); }

@@ -1,5 +1,6 @@
 import { createContext, createElement, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { setMoneyLocale } from './api';
+import { uiEn, uiHi, uiFr, uiEs } from './i18n-ui';
 
 export type Lang = 'en' | 'hi' | 'fr' | 'es';
 export const LANGS: { code: Lang; label: string; locale: string }[] = [
@@ -9,7 +10,7 @@ export const LANGS: { code: Lang; label: string; locale: string }[] = [
   { code: 'es', label: 'Español', locale: 'es-ES' },
 ];
 
-const en = {
+const enBase = {
   'lang.label': 'Language',
   'nav.roles': 'Role switcher',
   'tab.ravi': 'Ravi', 'tab.maya': 'Maya', 'tab.pay': 'Pay page', 'tab.ledger': 'Ledger',
@@ -109,10 +110,11 @@ const en = {
   'ev.agreement_drafted': 'Agreement', 'ev.approval': 'Approval', 'ev.agreement_active': 'Active', 'ev.agreement_edited': 'Edit', 'ev.funding': 'Funding', 'ev.disbursement': 'Disbursement', 'ev.payment': 'Payment', 'ev.split': 'Split', 'ev.skip': 'Skipped',
   'ev.hardship_request': 'Hardship', 'ev.hardship_approved': 'Hardship ✓', 'ev.hardship_denied': 'Hardship ✗', 'ev.payoff': 'Paid off', 'ev.fallback': 'Fallback', 'ev.review': 'Review', 'ev.week_closed': 'Week', 'ev.reset': 'Reset', 'ev.end_of_term': 'Term end', 'ev.webhook': 'Webhook',
 };
+const en = { ...enBase, ...uiEn };
 export type Key = keyof typeof en;
 type Dict = Record<Key, string>;
 
-const hi: Dict = {
+const hiBase = {
   'lang.label': 'भाषा', 'nav.roles': 'भूमिका बदलें',
   'tab.ravi': 'रवि', 'tab.maya': 'माया', 'tab.pay': 'भुगतान पेज', 'tab.ledger': 'लेजर',
   'tabLong.borrower': 'उधार लेने वाले: रवि', 'tabLong.lender': 'उधार देने वाली: माया', 'tabLong.customer': 'ग्राहक', 'tabLong.ledger': 'लेजर',
@@ -199,7 +201,7 @@ const hi: Dict = {
   'ev.hardship_request': 'राहत', 'ev.hardship_approved': 'राहत ✓', 'ev.hardship_denied': 'राहत ✗', 'ev.payoff': 'चुकता', 'ev.fallback': 'बैकअप', 'ev.review': 'समीक्षा', 'ev.week_closed': 'हफ़्ता', 'ev.reset': 'रीसेट', 'ev.end_of_term': 'अवधि अंत', 'ev.webhook': 'वेबहुक',
 };
 
-const fr: Dict = {
+const frBase = {
   'lang.label': 'Langue', 'nav.roles': 'Changer de rôle',
   'tab.ravi': 'Ravi', 'tab.maya': 'Maya', 'tab.pay': 'Paiement', 'tab.ledger': 'Registre',
   'tabLong.borrower': 'Emprunteur : Ravi', 'tabLong.lender': 'Prêteuse : Maya', 'tabLong.customer': 'Client', 'tabLong.ledger': 'Registre',
@@ -286,7 +288,7 @@ const fr: Dict = {
   'ev.hardship_request': 'Répit', 'ev.hardship_approved': 'Répit ✓', 'ev.hardship_denied': 'Répit ✗', 'ev.payoff': 'Remboursé', 'ev.fallback': 'Secours', 'ev.review': 'Bilan', 'ev.week_closed': 'Semaine', 'ev.reset': 'Réinitialisation', 'ev.end_of_term': 'Fin d’accord', 'ev.webhook': 'Webhook',
 };
 
-const es: Dict = {
+const esBase = {
   'lang.label': 'Idioma', 'nav.roles': 'Cambiar de rol',
   'tab.ravi': 'Ravi', 'tab.maya': 'Maya', 'tab.pay': 'Pago', 'tab.ledger': 'Registro',
   'tabLong.borrower': 'Prestatario: Ravi', 'tabLong.lender': 'Prestamista: Maya', 'tabLong.customer': 'Cliente', 'tabLong.ledger': 'Registro',
@@ -373,6 +375,9 @@ const es: Dict = {
   'ev.hardship_request': 'Respiro', 'ev.hardship_approved': 'Respiro ✓', 'ev.hardship_denied': 'Respiro ✗', 'ev.payoff': 'Devuelto', 'ev.fallback': 'Respaldo', 'ev.review': 'Revisión', 'ev.week_closed': 'Semana', 'ev.reset': 'Reinicio', 'ev.end_of_term': 'Fin de plazo', 'ev.webhook': 'Webhook',
 };
 
+const hi: Dict = { ...hiBase, ...uiHi };
+const fr: Dict = { ...frBase, ...uiFr };
+const es: Dict = { ...esBase, ...uiEs };
 export const DICTS: Record<Lang, Dict> = { en, hi, fr, es };
 
 export type Vars = Record<string, string | number>;

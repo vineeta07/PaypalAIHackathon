@@ -35,12 +35,13 @@ function Row({ k, v }: { k: string; v: ReactNode }) {
   return (<div className="flex items-baseline justify-between gap-3 border-b border-line/60 py-2 last:border-0"><dt className="text-sm text-muted">{k}</dt><dd className="text-right font-semibold num">{v}</dd></div>);
 }
 
-export function AgreementCard({ s, role, onState }: { s: State; role: 'lender' | 'borrower'; onState: (s: State) => void }) {
+export function AgreementCard({ s, role, onState, tour }: { s: State; role: 'lender' | 'borrower'; onState: (s: State) => void; tour?: string }) {
   const { t, lang } = useI18n();
   const a = s.agreement!;
   const tm = a.terms;
   const act = useAction();
   const [editing, setEditing] = useState(false);
+  const [open, setOpen] = useState(!s.loan);
   const [draft, setDraft] = useState({ amount: String(tm.principal_cents / 100), share: String((tm.tiers[0]?.share_bps ?? 1500) / 100), min: String(tm.weekly_min_income_cents / 100), cap: String(tm.weekly_cap_cents / 100), term: String(tm.term_weeks) });
   const funded = !!s.loan;
   const aff = a.affordability || s.request?.affordability;
@@ -55,9 +56,25 @@ export function AgreementCard({ s, role, onState }: { s: State; role: 'lender' |
   }, t('ag.editOk'));
   const notes = [...(a.notes || []), ...(a.ai_notes || [])].filter((v, i, arr) => arr.indexOf(v) === i);
   const warning = aff?.warning ? t('ag.warning', { time: aff.payoff_weeks ? t('ag.termVal', { n: aff.payoff_weeks }) : t('ag.over3y'), amount: fmt(aff.suggested_principal_cents || 0) }) : null;
+  const status = a.active || funded ? <Pill tone="ok" dot>{t('ag.active')}</Pill> : <Pill tone="warn" dot>{t('ag.awaiting')}</Pill>;
+  const top = tm.tiers[0];
+  if (!open) {
+    return (
+      <Card id="agreement" tour={tour} title={<span>{t('ag.title')} <span className="text-sm font-normal text-muted">v{a.version}</span></span>} action={status}>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0">
+            <p className="text-2xl font-semibold tracking-tight num">{fmt0(tm.principal_cents)} <span className="text-sm font-medium text-accent">{t('ag.interest')}</span></p>
+            <p className="mt-1 text-sm text-muted">{t('ag.compact', { share: pct(top?.share_bps ?? 0), min: fmt0(tm.weekly_min_income_cents), cap: fmt0(tm.weekly_cap_cents) })}</p>
+            <p className="mt-1 truncate text-xs text-muted"><Lock width={12} height={12} className="mr-1 inline" />SHA-256 <span className="mono">{a.terms_hash.slice(0, 16)}…</span></p>
+          </div>
+          <button className="btn-ghost shrink-0" onClick={() => setOpen(true)} aria-expanded={false}>{t('ag.show')}</button>
+        </div>
+      </Card>
+    );
+  }
   return (
-    <Card id="agreement" title={<span>{t('ag.title')} <span className="font-sans text-sm font-normal text-muted">v{a.version}</span></span>} action={a.active ? <Pill tone="ok"><Check width={14} height={14} />{t('ag.active')}</Pill> : <Pill tone="warn"><Clock width={14} height={14} />{t('ag.awaiting')}</Pill>}>
-      <p className="font-display text-4xl font-semibold num">{fmt0(tm.principal_cents)} <span className="font-sans text-base font-medium text-accent">{t('ag.interest')}</span></p>
+    <Card id="agreement" tour={tour} title={<span>{t('ag.title')} <span className="text-sm font-normal text-muted">v{a.version}</span></span>} action={<div className="flex items-center gap-2">{status}{funded && <button className="btn-quiet !min-h-[32px] !px-2 text-xs" onClick={() => setOpen(false)} aria-expanded={true}>{t('ag.hide')}</button>}</div>}>
+      <p className="text-4xl font-semibold tracking-tight num">{fmt0(tm.principal_cents)} <span className="font-sans text-base font-medium text-accent">{t('ag.interest')}</span></p>
       <p className="mt-3 leading-relaxed">{summary}</p>
       {!sameLang && a.summaries?.[lang] && s.request?.ai === 'gemini' && <p className="mt-2 text-xs text-muted">{t('ag.aiLang', { lang: LANGS.find((l) => l.code === lang)!.label })}</p>}
       {notes.length > 0 && <ul className="mt-3 space-y-1 text-sm text-warm">{notes.map((n) => <li key={n}>• {n}</li>)}</ul>}
@@ -82,7 +99,7 @@ export function AgreementCard({ s, role, onState }: { s: State; role: 'lender' |
           </div>
         ))}
       </div>
-      <p className="mt-4 flex items-start gap-2 break-all text-xs text-muted"><Lock width={14} height={14} className="mt-0.5 shrink-0" /><span>{t('ag.hash')} <code className="num">{a.terms_hash}</code></span></p>
+      <p className="mt-4 flex items-start gap-2 break-all text-xs text-muted"><Lock width={14} height={14} className="mt-0.5 shrink-0" /><span>{t('ag.hash')} <code className="mono">{a.terms_hash}</code></span></p>
       {!funded && (
         <div className="mt-5 flex flex-col gap-3 sm:flex-row">
           <button className="btn-primary flex-1" disabled={!!a.approvals[role] || !!act.busy} onClick={() => act.run('approve', async () => onState(await api('/api/agreement/approve', { role })), a.approvals[other] ? t('ag.bothOk') : t('ag.waitOther'))}>
@@ -94,7 +111,7 @@ export function AgreementCard({ s, role, onState }: { s: State; role: 'lender' |
       {editing && !funded && (
         <form className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-5" onSubmit={(e) => { e.preventDefault(); save(); }}>
           {(['amount', 'share', 'min', 'cap', 'term'] as const).map((k) => (
-            <label key={k} className="flex flex-col gap-1 text-sm"><span className="label">{t(`ag.f.${k}`)}</span><input inputMode="decimal" className="min-h-[44px] w-full rounded-xl border border-line bg-paper px-3 num" value={draft[k]} onChange={(e) => setDraft({ ...draft, [k]: e.target.value })} /></label>
+            <label key={k} className="flex flex-col gap-1 text-sm"><span className="label">{t(`ag.f.${k}`)}</span><input inputMode="decimal" className="input num" value={draft[k]} onChange={(e) => setDraft({ ...draft, [k]: e.target.value })} /></label>
           ))}
           <button className="btn-primary col-span-2 sm:col-span-5" disabled={!!act.busy}>{act.busy === 'edit' && <Spinner />}{t('ag.send')}</button>
         </form>

@@ -19,6 +19,7 @@ FairLoop lets a lender (a sister abroad, a friend, a community group) and a borr
 - Slow week? Nothing is taken. Sick? The borrower asks in their own words, the AI turns it into a structured hardship request, and the lender approves it. Terms can never get harsher automatically.
 - A **PayPal Subscriptions** safeguard stays suspended unless FairLoop sales stop for 3 weeks, so the lender is protected without anyone sending reminders.
 - An **AG Grid** ledger records every event in a verifiable hash chain.
+- A guided tour, a live demo-progress checklist and a "Next step" card mean judges and first-time users always know what to do next. The homepage has an interactive calculator that shows how a week's sales are split.
 - The whole app works in **English, Hindi, French and Spanish**. Gemini drafts the agreement in the borrower's language, and every amount, hardship request and notification can be read in the viewer's own language.
 
 ## How we built it

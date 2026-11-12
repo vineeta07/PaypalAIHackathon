@@ -19,9 +19,10 @@ await new Promise((r) => srv.stdout.on('data', (d) => String(d).includes('FairLo
 const errors = [];
 const browser = await chromium.launch();
 const shot = async (page, name) => page.screenshot({ path: path.join(out, `${name}.png`), fullPage: true });
-async function newPage(width, dark) {
+async function newPage(width, dark, opts = {}) {
   const ctx = await browser.newContext({ viewport: { width, height: width < 500 ? 844 : 900 }, deviceScaleFactor: 2, colorScheme: dark ? 'dark' : 'light', reducedMotion: 'reduce' });
   const page = await ctx.newPage();
+  if (!opts.tour) await page.addInitScript(() => { try { localStorage.setItem('fl-tour', 'done'); } catch { /* ignore */ } });
   page.on('console', (m) => m.type() === 'error' && errors.push(`${width}${dark ? ' dark' : ''}: ${m.text()}`));
   page.on('pageerror', (e) => errors.push(`pageerror: ${e.message}`));
   page.on('dialog', (d) => d.accept());
@@ -39,10 +40,10 @@ try {
   await click(p, 'Draft my agreement');
   await p.getByText('Loan agreement').waitFor();
   await click(p, 'Approve as Ravi');
-  await p.getByText('Approved. Waiting').waitFor();
+  await p.getByText('Approved. Waiting for the other person.').waitFor();
   await p.goto(`${base}/lender`);
   await click(p, 'Approve as Maya');
-  await p.getByText('Both approved').waitFor();
+  await p.getByText('Both approved: the agreement is active.').waitFor();
   await shot(p, 'agreement-1440-light');
   await p.goto(`${base}/borrower`);
   await click(p, 'Approve fallback with PayPal');
@@ -81,6 +82,24 @@ try {
   await p.goto(`${base}/borrower`);
   await p.getByText('Loan repaid 🎉', { exact: true }).waitFor();
   await shot(p, 'repaid-1440-light');
+
+  // guided tour: first-visit prompt, then every step, on desktop and phone
+  for (const w of [1440, 390]) {
+    const page = await newPage(w, false, { tour: true });
+    await page.goto(base);
+    await page.getByRole('button', { name: 'Start tour' }).click();
+    const tour = page.getByTestId('tour');
+    for (let i = 1; i <= 10; i++) {
+      await tour.getByText(`Step ${i} of 10`).waitFor();
+      if (w === 1440 && [2, 5, 7].includes(i)) { await page.waitForTimeout(250); await page.screenshot({ path: path.join(out, `tour-step${i}-${w}.png`) }); }
+      if (w === 390 && i === 4) { await page.waitForTimeout(250); await page.screenshot({ path: path.join(out, `tour-step${i}-${w}.png`) }); }
+      await tour.getByRole('button', { name: i === 10 ? 'Finish' : 'Next' }).click();
+    }
+    await tour.waitFor({ state: 'detached' });
+    const seen = await page.evaluate(() => localStorage.getItem('fl-tour'));
+    if (seen !== 'done') errors.push('tour completion not remembered');
+    await page.context().close();
+  }
 
   // language sweep: every page in Hindi, French and Spanish, phone and desktop
   for (const lang of ['hi', 'fr', 'es']) {

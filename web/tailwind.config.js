@@ -1,19 +1,27 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 const dir = path.dirname(fileURLToPath(import.meta.url));
+const c = (v) => `rgb(var(--${v}) / <alpha-value>)`;
 export default {
   darkMode: 'class',
   content: [path.join(dir, 'index.html'), path.join(dir, 'src/**/*.{ts,tsx}')],
   theme: {
     extend: {
-      fontFamily: { display: ['Fraunces', 'Noto Serif Devanagari', 'Georgia', 'serif'], sans: ['Inter', 'Noto Sans Devanagari', 'system-ui', 'sans-serif'] },
-      colors: {
-        paper: 'rgb(var(--paper) / <alpha-value>)', card: 'rgb(var(--card) / <alpha-value>)', ink: 'rgb(var(--ink) / <alpha-value>)',
-        muted: 'rgb(var(--muted) / <alpha-value>)', line: 'rgb(var(--line) / <alpha-value>)', accent: 'rgb(var(--accent) / <alpha-value>)',
-        accentsoft: 'rgb(var(--accentsoft) / <alpha-value>)', warm: 'rgb(var(--warm) / <alpha-value>)', warmsoft: 'rgb(var(--warmsoft) / <alpha-value>)', danger: 'rgb(var(--danger) / <alpha-value>)',
+      fontFamily: {
+        display: ['Geist', 'Noto Sans Devanagari', 'system-ui', 'sans-serif'],
+        sans: ['Geist', 'Noto Sans Devanagari', 'system-ui', 'sans-serif'],
+        mono: ['Geist Mono', 'ui-monospace', 'monospace'],
       },
-      boxShadow: { soft: '0 1px 2px rgb(16 24 40 / 0.04), 0 8px 24px -8px rgb(16 24 40 / 0.10)' },
-      borderRadius: { xl2: '14px' },
+      colors: {
+        paper: c('paper'), card: c('card'), ink: c('ink'), muted: c('muted'), line: c('line'), sidebar: c('sidebar'), subtle: c('subtle'),
+        accent: c('accent'), accentsoft: c('accentsoft'), onaccent: c('onaccent'), warm: c('warm'), warmsoft: c('warmsoft'),
+        danger: c('danger'), info: c('info'), infosoft: c('infosoft'),
+      },
+      boxShadow: {
+        soft: '0 1px 2px rgb(16 24 32 / 0.04)',
+        pop: '0 12px 32px -12px rgb(16 24 32 / 0.25), 0 2px 6px rgb(16 24 32 / 0.06)',
+      },
+      borderRadius: { xl2: '12px' },
     },
   },
 };

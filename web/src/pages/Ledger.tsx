@@ -38,11 +38,11 @@ export function Ledger({ s, dark }: { s: State; dark: boolean }) {
     { field: 'hash', headerName: t('col.hash'), width: 130, valueFormatter: (p) => `${String(p.value).slice(0, 10)}…`, cellStyle: { fontFamily: 'ui-monospace, monospace', fontSize: '12px' } as Record<string, string> },
   ], [lang]); // eslint-disable-line react-hooks/exhaustive-deps
   return (
-    <Card id="ledger" title={<span className="flex items-center gap-2"><List className="text-accent" />{t('page.ledger.title')}</span>} action={
+    <Card id="ledger" tour="ledger" title={<span className="flex items-center gap-2"><List className="text-accent" />{t('page.ledger.title')}</span>} action={
       <button className="btn-ghost !min-h-[44px] text-sm" disabled={!!act.busy} onClick={() => act.run('v', async () => { const r = await api<{ ok: boolean; count: number }>('/api/ledger/verify'); setVerify(r); if (!r.ok) throw new Error(t('led.failed')); }, t('led.verified'))}>{act.busy ? <Spinner /> : <Shield width={18} height={18} />}{t('led.verify')}</button>}>
       <p className="text-sm text-muted">{t('led.intro')} {lang !== 'en' && t('led.note')}</p>
       {verify && <p className={`mt-2 text-sm font-semibold ${verify.ok ? 'text-accent' : 'text-danger'}`} aria-live="polite">{verify.ok ? t('led.ok', { n: verify.count }) : t('led.broken', { n: verify.broken_at ?? 0 })}</p>}
-      <label className="mt-4 block"><span className="label">{t('led.filter')}</span><input type="search" value={filter} onChange={(e) => setFilter(e.target.value)} placeholder={t('led.placeholder')} className="mt-1 min-h-[44px] w-full rounded-xl border border-line bg-paper px-3" /></label>
+      <label className="mt-4 block"><span className="label">{t('led.filter')}</span><input type="search" value={filter} onChange={(e) => setFilter(e.target.value)} placeholder={t('led.placeholder')} className="input mt-1" /></label>
       <div className="mt-4">
         {!events.length ? <Empty icon={<List />} title={t('led.emptyTitle')} text={t('led.emptyText')} /> : wide ? (
           <div className={`${dark ? 'ag-theme-quartz-dark' : 'ag-theme-quartz'} w-full`} style={{ height: 520 }}>

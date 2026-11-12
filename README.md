@@ -217,6 +217,16 @@ Every function has a **deterministic offline fallback** (regex parsing plus temp
 - At the end of the term, `end_of_term_action` applies: `review` or `forgive_remaining`.
 - Every decision returns a reason, for example: *"15% of $40.00 = $6.00 → $6.00 to Maya. Week total $85.00, normal tier."*
 
+## Design and user experience
+
+- **Calm, bank-grade look.** Warm neutrals with one deep green accent (a muted green in dark mode), no neon, no gradients. The font is **Geist**, with **Geist Mono** for numbers and hashes and Noto Sans Devanagari for Hindi. Full light and dark themes.
+- **Left sidebar** with the people you can view as (Ravi, Maya, the customer page, the ledger), a live **demo-progress checklist** (click any step to jump to it), the language and theme settings, and the PayPal/AI mode. On phones it becomes a slide-out drawer, plus a bottom tab bar.
+- **Explainer homepage**: the problem, how it works in four steps, an **interactive calculator** (drag a slider to see what Maya receives and Ravi keeps in a given week under the real demo terms), the safety model, a view picker and an FAQ.
+- **Guided tour** (10 steps) that spotlights the right element on each page, moving between pages as needed. It's offered on the first visit, can be restarted from the sidebar, works with the keyboard (←, →, Esc) and uses a bottom sheet on phones.
+- **"Next step" card** on every dashboard that says who needs to act and links straight there, so nobody gets lost in the two-person flow.
+- **Dashboards** with stat tiles and progress, and the agreement collapses to a one-line summary once the loan is funded.
+- Accessibility: semantic landmarks, labelled controls, visible focus rings, `aria-live` for money events, 44 px touch targets and `prefers-reduced-motion` support.
+
 ## Languages
 
 The globe picker in the header switches the whole interface between **English, Hindi, French and Spanish**. The choice is saved per browser and sets `<html lang>`. Hindi uses Noto Sans and Noto Serif Devanagari.
@@ -236,7 +246,7 @@ npm test
 
 29 `node:test` tests cover: agreement templates in all four languages, the multilingual offline hardship parser, a French loan request over HTTP, tiers, the weekly minimum crossing mid-week, the weekly cap, the final payment capped at the balance, pause, the 4-week review trigger, idempotency, the both-approvals requirement, edits resetting approvals, AI-output clamping, hardship that cannot increase the borrower's burden, end of term, fallback activation/suspension/cancellation (including pause and the 25% rule), the PayPal client against a mocked fetch (token caching, request ids, capture parsing, error parsing, payout batch building), and a full HTTP flow from request to payoff.
 
-`npm run e2e` drives the whole demo in headless Chromium. It fails on any console error or horizontal overflow at 360, 390, 768, 1024 and 1440 px, in light and dark mode. It also walks every page in Hindi, French and Spanish at 360 px and 1440 px, checking for overflow, untranslated placeholders and the correct `<html lang>`.
+`npm run e2e` drives the whole demo in headless Chromium. It fails on any console error or horizontal overflow at 360, 390, 768, 1024 and 1440 px, in light and dark mode. It also runs the full guided tour on desktop and phone, and walks every page in Hindi, French and Spanish at 360 px and 1440 px, checking for overflow, untranslated placeholders and the correct `<html lang>`.
 
 ## Limitations
 

@@ -24,6 +24,7 @@ export interface State {
   notifications: { id: string; to: string; text: string; key?: string | null; vars?: Record<string, unknown>; at: string }[];
   preview: null | { week: string; week_income_cents: Cents; week_deducted_cents: Cents; sample_cents: Cents; decision: Decision };
   ledger_count: number;
+  real_sales?: number;
 }
 export interface LedgerEvent { seq: number; type: string; at: string; actor: string; summary: string; amount_cents: Cents; ref: string | null; status: string; prev_hash: string; hash: string }
 

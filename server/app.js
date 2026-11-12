@@ -58,7 +58,7 @@ export function createApp({ store, paypal, ai, config = {}, staticDir = null, no
       loan: d.loan ? { ...d.loan, processed: undefined, remaining_cents: E.remaining(d.loan), end_week: addWeeks(d.loan.start_week, d.loan.terms.term_weeks) } : null,
       funding: d.funding, payments: d.payments.slice(-50).reverse(), payouts: Object.values(d.payouts).slice(-30).reverse(),
       hardships: d.hardships.slice().reverse(), review: d.review, fallback: d.fallback, notifications: d.notifications,
-      preview: preview(), ledger_count: d.ledger.length,
+      preview: preview(), ledger_count: d.ledger.length, real_sales: d.payments.filter((p) => !p.simulated).length,
     };
   }
 
