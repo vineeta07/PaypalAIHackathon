@@ -119,6 +119,17 @@ To use the real PayPal sandbox and Gemini, copy `.env.example` to `.env`, fill i
 
 > No test credentials are committed. Judges can run everything in simulated mode with zero keys.
 
+### Gemini API key
+
+1. Go to https://aistudio.google.com and sign in with a Google account.
+2. Click **Get API key → Create API key**, and copy it into `GEMINI_API_KEY`.
+3. Check which models your key can use (AI Studio's model picker). If `gemini-3.6-flash` isn't listed, set `GEMINI_MODEL` to one that is. If the model call fails, FairLoop falls back to its offline rules, and the sidebar shows **AI: offline**.
+
+### Where the keys go
+
+- **On your computer:** copy `.env.example` to `.env`, paste the values, and restart `npm start`. `.env` is git-ignored; never commit it.
+- **On Render:** open **Dashboard → fairloop → Environment**, add the same names and values, and save (it redeploys).
+
 ## Environment variables
 
 | Name | Required | Default | Purpose |
