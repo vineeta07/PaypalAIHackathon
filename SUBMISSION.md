@@ -58,18 +58,18 @@ paypal-orders-v2 · paypal-payouts · paypal-subscriptions · paypal-js-sdk · p
 
 ---
 
-## Demo video script (2:45)
+## Demo video script (3:00)
 
-| Time | Screen | Voice-over |
-|---|---|---|
-| 0:00–0:15 | Landing page | "Ravi bakes cakes from home. He needs a $300 oven. A bank won't help, and borrowing from his sister Maya could strain the relationship. This is FairLoop." |
-| 0:15–0:35 | Ravi's dashboard: type the request, click **Draft my agreement** | "Ravi just says what he needs. Gemini checks it against his last eight weeks of sales and calls our affordability function." |
-| 0:35–0:55 | Agreement card, payoff chart, hash | "It drafts plain-English terms: 15% of each sale, 20% in great weeks, nothing in weeks under $30, at most $20 a week. The chart shows payoff in about 25 weeks. The terms are hashed." |
-| 0:55–1:05 | Approve as Ravi, switch to Maya, Approve | "Both must approve. Any edit resets both approvals." |
-| 1:05–1:15 | Ravi: **Approve fallback with PayPal** | "Ravi approves a $5/week PayPal subscription that's suspended immediately. It's a safeguard that only wakes up if FairLoop sales stop for three weeks." |
-| 1:15–1:30 | Maya: **Fund with PayPal** (sandbox popup), payout status | "Maya funds the loan with PayPal Checkout. FairLoop captures it and sends it to Ravi with PayPal Payouts." |
-| 1:30–1:50 | `/pay/ravi`: pick the chocolate cake, pay | "A customer buys a $40 cake. After capture, one payout batch splits it: $6 to Maya, $34 to Ravi, with the reason written out." |
-| 1:50–2:05 | **Simulate a slow week**, ledger shows "Skipped" | "In a slow week, under the minimum, nothing is taken. No reminders, no default." |
-| 2:05–2:25 | "I'm having a hard week": the sick message; Maya approves | "Ravi was sick. He asks in his own words, the AI structures it as a two-week pause, and Maya approves. Terms can never get harsher automatically." |
-| 2:25–2:38 | Simulate good weeks, "Loan repaid 🎉" | "When the balance hits zero, the last deduction is capped, deductions stop and the safeguard is cancelled." |
-| 2:38–2:45 | Ledger: **Verify chain** | "Every event is hash-chained in an AG Grid ledger. FairLoop: credit built on trust, enforced by code, powered by PayPal." |
+The full, recording-ready script is in [`docs/PITCH.md`](docs/PITCH.md): the spoken pitch, a pre-recording checklist, timed narration with on-screen actions, and backup lines. The timeline:
+
+| Time | Scene |
+|---|---|
+| 0:00–0:20 | Hook: Ravi, his irregular income, the oven he needs |
+| 0:20–0:40 | Problem: no fair credit, awkward family loans, fixed repayments break in slow weeks |
+| 0:40–0:55 | Solution: homepage calculator; a slow week takes nothing |
+| 0:55–1:20 | Ravi asks by voice; Gemini drafts plain-language terms and a payoff chart |
+| 1:20–1:40 | Both approve the hashed terms; Maya funds with PayPal Checkout, then a Payouts disbursement |
+| 1:40–2:00 | A customer buys a $40 cake: one PayPal payment split $6 / $34 automatically |
+| 2:00–2:25 | Slow week skipped; Ravi asks for a pause in Hindi by voice; Maya approves |
+| 2:25–2:45 | Hash-chained ledger, Verify chain; how it's built (PayPal + Gemini + rules engine) |
+| 2:45–3:00 | Impact and close |

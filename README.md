@@ -136,7 +136,29 @@ To use the real PayPal sandbox and Gemini, copy `.env.example` to `.env`, fill i
 
 ## Deploy to Render
 
-The repo includes a `render.yaml` Blueprint. In Render, choose **New → Blueprint** and pick this repo. It builds with `npm ci --include=dev && npm run build`, starts with `npm start`, and health-checks `/api/health`. Secrets are declared `sync: false`, so Render asks for them; with none it runs in simulated mode. Render serves over HTTPS, which the PWA install and the microphone both need.
+The repo includes a [`render.yaml`](render.yaml) Blueprint, so Render configures everything for you. A fresh clone builds and starts with exactly these commands.
+
+**One-click:** open https://render.com/deploy?repo=https://github.com/vineeta07/PaypalAIHackathon (you'll be asked to sign in to Render).
+
+**Or step by step:**
+
+1. Sign in at https://dashboard.render.com with GitHub, and allow Render to access this repository.
+2. Click **New → Blueprint**, pick `vineeta07/PaypalAIHackathon`, branch `main`.
+3. Render reads `render.yaml` and shows one web service, **fairloop** (Node 22, free plan). It asks for the secret values; you can leave them all empty to deploy in **simulated mode**:
+   - `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET`: sandbox app keys (turns on the real PayPal sandbox)
+   - `LENDER_PAYPAL_EMAIL`, `BORROWER_PAYPAL_EMAIL`: sandbox personal-account emails that receive Payouts
+   - `GEMINI_API_KEY`: turns on Gemini for drafting and the voice assistant
+   - `PAYPAL_WEBHOOK_ID`: optional, see step 6
+4. Click **Apply**. Render runs `npm ci --include=dev && npm run build`, then `npm start`, and waits for `/api/health` to answer.
+5. Open your URL, for example `https://fairloop-xxxx.onrender.com`. The sidebar shows **PayPal sandbox** or **PayPal simulated** and **AI: Gemini** or **AI: offline**, so you can confirm which keys are active.
+6. Optional: in the PayPal developer dashboard, add a webhook pointing to `https://<your-url>/api/paypal/webhook` (events `PAYMENT.CAPTURE.COMPLETED` and `PAYMENT.PAYOUTS-ITEM.*`), copy its ID into `PAYPAL_WEBHOOK_ID` in Render (**Environment** tab), and save; Render redeploys automatically.
+
+**Good to know**
+
+- Render serves over **HTTPS**, which the microphone (voice assistant) and **Install app** (PWA) both need.
+- Every push to `main` redeploys automatically. To change keys later: **Dashboard → fairloop → Environment**.
+- **Free plan:** the service sleeps after about 15 minutes idle, and the first visit after that takes 30–60 seconds to wake. Open the URL a minute before judging or recording. The disk is not persistent, so demo data resets on each deploy or restart; the **Reset demo** button reseeds it anytime.
+- **Other hosts:** any Node 22 host works with `npm ci --include=dev && npm run build` then `npm start`. The app listens on `PORT`.
 
 ## Architecture
 
