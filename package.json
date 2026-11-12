@@ -15,7 +15,8 @@
     "test": "node --test test/*.test.js",
     "lint": "tsc -p web/tsconfig.json --noEmit && node --check server/index.js",
     "e2e": "node scripts/e2e.js",
-    "icons": "node scripts/icons.js"
+    "icons": "node scripts/brand.js",
+    "brand": "node scripts/brand.js"
   },
   "dependencies": {
     "express": "^5.1.0"

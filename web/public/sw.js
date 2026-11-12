@@ -1,6 +1,6 @@
 // FairLoop service worker: offline app shell. API calls always go to the network
 // (money data is never served from cache); pages fall back to the cached shell offline.
-const VERSION = 'fairloop-v1';
+const VERSION = 'fairloop-v2';
 const SHELL = ['/', '/manifest.webmanifest', '/icons/icon-192.png', '/icons/icon-512.png', '/favicon.svg'];
 
 self.addEventListener('install', (event) => {

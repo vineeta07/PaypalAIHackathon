@@ -1,6 +1,7 @@
 import type { SVGProps } from 'react';
 const base = (p: SVGProps<SVGSVGElement>) => ({ width: 20, height: 20, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 1.8, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const, 'aria-hidden': true, ...p });
-export const Logo = (p: SVGProps<SVGSVGElement>) => (<svg {...base(p)} viewBox="0 0 32 32" stroke="none"><rect width="32" height="32" rx="9" fill="currentColor" /><path d="M9 17a7 7 0 0 1 12-5l2-2v6h-6l2-2a4 4 0 1 0 1 4h3a7 7 0 0 1-14-1z" fill="rgb(var(--card))" /></svg>);
+/** FairLoop mark: a ring (the loop between two people) with one lifted segment (the share of each sale that goes back). Generated geometry: scripts/brand.js */
+export const Logo = (p: SVGProps<SVGSVGElement>) => (<svg width={28} height={28} viewBox="0 0 64 64" aria-hidden="true" {...p}><rect width="64" height="64" rx="15" fill="#166543" /><g fill="none" strokeWidth="8"><path d="M45.94 31.69A15 15 0 1 1 32.31 18.06" stroke="#fff" /><path d="M37.54 16.18A15 15 0 0 1 47.82 26.46" stroke="#9AD6B5" /></g></svg>);
 export const Home = (p: SVGProps<SVGSVGElement>) => (<svg {...base(p)}><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z" /></svg>);
 export const Heart = (p: SVGProps<SVGSVGElement>) => (<svg {...base(p)}><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" /></svg>);
 export const Store = (p: SVGProps<SVGSVGElement>) => (<svg {...base(p)}><path d="M4 9l1.5-5h13L20 9M4 9h16v11H4zM9 20v-6h6v6" /></svg>);

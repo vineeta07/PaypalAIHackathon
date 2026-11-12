@@ -53,7 +53,7 @@ function Shell() {
 
       <header className="sticky top-0 z-30 flex items-center gap-2 border-b border-line bg-paper/90 px-3 py-2 backdrop-blur lg:hidden">
         <button className="btn-quiet !min-h-[44px] !px-2.5" onClick={() => setDrawer(true)} aria-label={t('nav.menu')} aria-expanded={drawer}><Menu /></button>
-        <Link to="/" className="flex min-h-[44px] items-center gap-2 text-accent" aria-label={t('home')}><Logo width={26} height={26} /><span className="text-base font-semibold tracking-tight text-ink">FairLoop</span></Link>
+        <Link to="/" className="flex min-h-[44px] items-center gap-2 text-accent" aria-label={t('home')}><Logo width={28} height={28} /><span className="text-[17px] font-semibold tracking-[-0.03em] text-ink">Fair<span className="text-accent">Loop</span></span></Link>
         <div className="ml-auto flex items-center gap-1" data-tour="settings">
           <div className="w-[118px]"><LangSelect id="lang-top" /></div>
           <ThemeToggle dark={dark} setDark={setDark} compact />

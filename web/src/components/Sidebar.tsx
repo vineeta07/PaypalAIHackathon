@@ -52,7 +52,7 @@ export function Sidebar({ s, dark, setDark, onReset, onTour, onNavigate }: { s: 
   return (
     <div className="flex h-full flex-col gap-6 overflow-y-auto px-3 py-4">
       <NavLink to="/" onClick={onNavigate} className="flex items-center gap-2.5 px-2 text-accent" aria-label={t('home')}>
-        <Logo width={28} height={28} /><span className="text-[17px] font-semibold tracking-tight text-ink">FairLoop</span>
+        <Logo width={30} height={30} /><span className="text-[18px] font-semibold tracking-[-0.03em] text-ink">Fair<span className="text-accent">Loop</span></span>
       </NavLink>
 
       <nav aria-label={t('nav.roles')} data-tour="nav">

@@ -1,6 +1,13 @@
-# FairLoop
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/brand/fairloop-logo-dark.png">
+    <img src="docs/brand/fairloop-logo-light.png" alt="FairLoop" width="360">
+  </picture>
+</p>
 
-**Interest-free loans between people who trust each other, repaid automatically from what the borrower earns, through PayPal.**
+<h1 align="center">FairLoop</h1>
+
+<p align="center"><strong>Interest-free loans between people who trust each other, repaid automatically from what the borrower earns, through PayPal.</strong></p>
 
 ![FairLoop homepage](docs/screenshots/landing-1440-light.png)
 
@@ -100,7 +107,7 @@ To use the real PayPal sandbox and Gemini, copy `.env.example` to `.env`, fill i
 | `npm test` | 38 `node:test` tests: engine, PayPal client, AI, voice agent, i18n, HTTP routes |
 | `npm run lint` | TypeScript type-check plus a server syntax check |
 | `npm run e2e` | Headless Chromium click-through of the whole demo, tour, assistant, PWA and languages; writes `docs/screenshots/` |
-| `npm run icons` | Regenerates the PWA icons from the original SVG artwork |
+| `npm run brand` | Regenerates the logo, app icons, favicon and social card from `scripts/brand.js` (`npm run icons` is an alias) |
 
 ## PayPal sandbox setup
 
@@ -358,6 +365,26 @@ It fails on any console error, horizontal overflow (at 360, 390, 768, 1024 and 1
 - More languages for voice and interface (Tamil, Bengali, Swahili), and an always-listening hands-free mode.
 - Group lending circles, and seller-platform lenders.
 - Licensed partners for commercial (interest-bearing) lending, where regulation allows.
+
+## Brand
+
+<img src="docs/brand/mark.svg" alt="FairLoop mark" width="72" align="left" style="margin-right:16px">
+
+**The mark is a loop with a fair share.** The white ring is the loop of money between two people who trust each other: lent once, and coming back over time. The **mint segment lifted out of the ring** is the agreed share of each sale that goes back to the lender. It is never the whole ring, and nothing is taken in a slow week. The same ring is used across the app as the repayment-progress ring.
+
+<br clear="left">
+
+| Asset | File |
+|---|---|
+| App mark (rounded tile) | [`docs/brand/mark.svg`](docs/brand/mark.svg) |
+| Flat mark for light / dark backgrounds | [`mark-flat.svg`](docs/brand/mark-flat.svg) · [`mark-flat-dark.svg`](docs/brand/mark-flat-dark.svg) |
+| Logo lockup (light / dark) | [`fairloop-logo-light.png`](docs/brand/fairloop-logo-light.png) · [`fairloop-logo-dark.png`](docs/brand/fairloop-logo-dark.png) |
+| Social / Devpost card (1280×640) | [`social-card.png`](docs/brand/social-card.png) |
+| PWA and Apple icons, favicon | `web/public/icons/`, `web/public/favicon.svg` |
+
+- **Colours:** deep green `#166543`, mint `#9AD6B5`, ink `#181B1F`, paper `#F6F5F1`.
+- **Type:** Geist (wordmark "Fair**Loop**", with "Loop" in green).
+- **Source:** every asset is generated from one geometric definition in [`scripts/brand.js`](scripts/brand.js) (`npm run brand`), so the app, icons and docs always match. All artwork is original.
 
 ## License
 

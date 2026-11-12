@@ -48,6 +48,10 @@ PayPal's building blocks (Orders, Payouts, Subscriptions, Webhooks) compose into
 
 PayPal Multiparty so funds never touch the platform, real accounts and invitations, more languages (Tamil, Bengali, Swahili), lending circles, and licensed partners for commercial lending.
 
+## Gallery and thumbnail
+
+Use `docs/brand/social-card.png` (1280×640) as the Devpost thumbnail and the first gallery image, followed by the screenshots in `docs/screenshots/`. The FairLoop mark (a ring with one lifted mint segment) stands for a loop of trust where a fair share of each sale goes back.
+
 ## Built with
 
 paypal-orders-v2 · paypal-payouts · paypal-subscriptions · paypal-js-sdk · paypal-webhooks · google-gemini · node.js · express · react · typescript · vite · tailwindcss · framer-motion · recharts · ag-grid · render · playwright · web-speech-api · pwa · i18n
