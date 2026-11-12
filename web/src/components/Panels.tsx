@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { api, fmt, type State } from '../api';
 import { Card, Pill, statusTone, useAction, Feedback, Spinner, Empty } from './ui';
 import { Shield, Send, Refresh, Clock, Check, Heart } from './Icons';
@@ -59,6 +60,15 @@ export function FundCard({ s, onState }: { s: State; onState: (s: State) => void
 
 export function PayoutsCard({ s, onState }: { s: State; onState: (s: State) => void }) {
   const act = useAction();
+  const pendingIds = s.payouts.slice(0, 8).filter((p) => p.batch_status !== 'SUCCESS' || p.items.some((i) => i.status === 'PENDING')).map((p) => p.payout_batch_id).join(',');
+  // Poll GET /v1/payments/payouts/{id} for pending batches (PENDING → SUCCESS / UNCLAIMED / FAILED).
+  useEffect(() => {
+    if (!pendingIds) return;
+    const t = setTimeout(async () => {
+      try { for (const id of pendingIds.split(',')) await api(`/api/payouts/${id}/refresh`, {}); onState(await api('/api/state')); } catch { /* shown on manual refresh */ }
+    }, 4000);
+    return () => clearTimeout(t);
+  }, [pendingIds, onState]);
   return (
     <Card id="payouts" title="PayPal payouts" action={<button className="btn-ghost !min-h-[40px] !px-3 text-sm" disabled={!!act.busy || !s.payouts.length} onClick={() => act.run('r', async () => { for (const p of s.payouts.slice(0, 8)) if (p.batch_status !== 'SUCCESS') await api(`/api/payouts/${p.payout_batch_id}/refresh`, {}); onState(await api('/api/state')); }, 'Statuses refreshed from PayPal.')}>{act.busy ? <Spinner /> : <Refresh width={16} height={16} />}Refresh</button>}>
       {!s.payouts.length ? <Empty icon={<Send />} title="No payouts yet" text="Disbursements and repayment splits will show here with their PayPal status." /> : (
