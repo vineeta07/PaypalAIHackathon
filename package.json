@@ -1,0 +1,37 @@
+{
+  "name": "fairloop",
+  "version": "1.0.0",
+  "description": "Interest-free loans between people who trust each other, repaid automatically from what the borrower earns, through PayPal.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Vineeta",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "dev": "node scripts/dev.js",
+    "build": "vite build --config web/vite.config.ts",
+    "start": "node scripts/start.js",
+    "test": "node --test test/*.test.js",
+    "lint": "tsc -p web/tsconfig.json --noEmit && node --check server/index.js",
+    "e2e": "node scripts/e2e.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "ag-grid-community": "^32.3.3",
+    "ag-grid-react": "^32.3.3",
+    "autoprefixer": "^10.4.20",
+    "framer-motion": "^11.11.17",
+    "postcss": "^8.4.49",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.28.0",
+    "recharts": "^2.13.3",
+    "tailwindcss": "^3.4.15",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.11"
+  }
+}

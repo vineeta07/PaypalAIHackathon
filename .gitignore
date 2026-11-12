@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.env
+data/db.json
+data/*.tmp
+*.log
+test-results/
