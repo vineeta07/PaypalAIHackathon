@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: fairloop
+    runtime: node
+    plan: free
+    buildCommand: npm ci --include=dev && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: PAYPAL_API_BASE
+        value: https://api-m.sandbox.paypal.com
+      - key: GEMINI_MODEL
+        value: gemini-3.6-flash
+      - key: PAYPAL_CLIENT_ID
+        sync: false
+      - key: PAYPAL_CLIENT_SECRET
+        sync: false
+      - key: PAYPAL_WEBHOOK_ID
+        sync: false
+      - key: LENDER_PAYPAL_EMAIL
+        sync: false
+      - key: BORROWER_PAYPAL_EMAIL
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
