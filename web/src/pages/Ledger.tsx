@@ -1,13 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import { AgGridReact } from 'ag-grid-react';
-import { ModuleRegistry, ClientSideRowModelModule, type ColDef } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { api, fmt, type LedgerEvent, type State } from '../api';
 import { Card, Pill, statusTone, useAction, Feedback, Spinner, Empty } from '../components/ui';
 import { Shield, List } from '../components/Icons';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const TYPE_LABEL: Record<string, string> = { agreement_drafted: 'Agreement', approval: 'Approval', agreement_active: 'Active', agreement_edited: 'Edit', funding: 'Funding', disbursement: 'Disbursement', payment: 'Payment', split: 'Split', skip: 'Skipped', hardship_request: 'Hardship', hardship_approved: 'Hardship ✓', hardship_denied: 'Hardship ✗', payoff: 'Paid off', fallback_plan: 'Fallback', fallback_ready: 'Fallback', fallback_activated: 'Fallback on', fallback_suspended: 'Fallback off', fallback_cancelled: 'Fallback end', fallback_charge: 'Fallback', review_prompt: 'Review', review_vote: 'Review', review_applied: 'Review', week_closed: 'Week', reset: 'Reset', end_of_term: 'Term end', webhook: 'Webhook' };
 
