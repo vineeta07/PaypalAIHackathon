@@ -348,7 +348,7 @@ It fails on any console error, horizontal overflow (at 360, 390, 768, 1024 and 1
 - "Simulate a week" uses simulated captures even in sandbox mode, to avoid spamming real sandbox payouts. It is labelled "Demo only".
 - In sandbox mode, real fallback subscription charges arrive at the platform account. Forwarding them to the lender would need a `PAYMENT.SALE.COMPLETED` webhook handler, which is implemented only in simulated mode.
 - **Voice input** needs a browser with the Web Speech API (Chrome, Edge, Safari) and HTTPS or localhost. In Chrome, speech audio is processed by the browser vendor's speech service. Spoken replies depend on the device having a voice for that language (Hindi voices are not installed everywhere).
-- Automated tests type into the assistant; the microphone itself was checked only by hand-off to the browser API, because headless browsers have no microphone.
+- Automated tests type into the assistant. The microphone path is not tested automatically, because headless browsers have no microphone; try it by hand in Chrome or Safari.
 - The real PayPal sandbox and Gemini paths are unit-tested against mocked responses, but need your keys to verify live.
 
 ## What's next
