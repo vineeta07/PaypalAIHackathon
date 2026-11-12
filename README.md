@@ -18,6 +18,7 @@ A lender (family member, friend, community group or seller platform) and a borro
 - **AI drafts, people decide.** Gemini drafts a plain-language agreement, checks affordability against real income history, turns hardship messages into structured requests, and explains every deduction.
 - **The money rules live in code.** A deterministic, unit-tested engine decides every cent. The AI never moves money.
 - **USD only.** PayPal doesn't support domestic payments within India, so the demo uses international personas.
+- **Four languages.** English, हिन्दी (Hindi), Français and Español, switchable from the header at any time.
 
 ## Demo flow
 
@@ -216,15 +217,26 @@ Every function has a **deterministic offline fallback** (regex parsing plus temp
 - At the end of the term, `end_of_term_action` applies: `review` or `forgive_remaining`.
 - Every decision returns a reason, for example: *"15% of $40.00 = $6.00 → $6.00 to Maya. Week total $85.00, normal tier."*
 
+## Languages
+
+The globe picker in the header switches the whole interface between **English, Hindi, French and Spanish**. The choice is saved per browser and sets `<html lang>`. Hindi uses Noto Sans and Noto Serif Devanagari.
+
+- **Agreement text.** When Ravi asks for a loan, Gemini writes the agreement summary (and any follow-up question) in the language he is using. The server also renders the same validated terms into all four languages from templates, so switching language later still shows a faithful translation of exactly what was approved.
+- **Money explanations, hardship requests, review options and notifications** are stored as structured data (amounts, percentages, request type), not as sentences. The browser renders them in the viewer's language, so Maya can read in English while Ravi reads in Hindi.
+- **Hardship requests can be written in any of the four languages.** Gemini understands them, and the offline parser recognises pause, extend, reduce-share, fixed-amount and forgiveness requests (plus illness and slow-sales reasons) in all four.
+- Money is formatted per locale but is always **USD** (for example `$300.00` in English and `300,00 $US` in French).
+- **The hash-chained ledger is written in English on purpose**: it is the audit record, and changing its wording would change its hashes. The page says so in the other languages.
+- **Not translated:** the PayPal checkout popup (PayPal localises it itself) and AG Grid's built-in pagination controls.
+
 ## Tests
 
 ```bash
 npm test
 ```
 
-23 `node:test` tests cover: tiers, the weekly minimum crossing mid-week, the weekly cap, the final payment capped at the balance, pause, the 4-week review trigger, idempotency, the both-approvals requirement, edits resetting approvals, AI-output clamping, hardship that cannot increase the borrower's burden, end of term, fallback activation/suspension/cancellation (including pause and the 25% rule), the PayPal client against a mocked fetch (token caching, request ids, capture parsing, error parsing, payout batch building), and a full HTTP flow from request to payoff.
+29 `node:test` tests cover: agreement templates in all four languages, the multilingual offline hardship parser, a French loan request over HTTP, tiers, the weekly minimum crossing mid-week, the weekly cap, the final payment capped at the balance, pause, the 4-week review trigger, idempotency, the both-approvals requirement, edits resetting approvals, AI-output clamping, hardship that cannot increase the borrower's burden, end of term, fallback activation/suspension/cancellation (including pause and the 25% rule), the PayPal client against a mocked fetch (token caching, request ids, capture parsing, error parsing, payout batch building), and a full HTTP flow from request to payoff.
 
-`npm run e2e` drives the whole demo in headless Chromium. It fails on any console error or horizontal overflow at 360, 390, 768, 1024 and 1440 px, in light and dark mode.
+`npm run e2e` drives the whole demo in headless Chromium. It fails on any console error or horizontal overflow at 360, 390, 768, 1024 and 1440 px, in light and dark mode. It also walks every page in Hindi, French and Spanish at 360 px and 1440 px, checking for overflow, untranslated placeholders and the correct `<html lang>`.
 
 ## Limitations
 
@@ -238,7 +250,6 @@ npm test
 
 - PayPal Multiparty / Commerce Platform onboarding so funds never touch the platform.
 - Real accounts and auth, plus invitations by email or link.
-- Hindi and Spanish agreements (language toggle).
 - Group lending circles, and seller-platform lenders.
 - Licensed partners for commercial (interest-bearing) lending, where regulation allows.
 

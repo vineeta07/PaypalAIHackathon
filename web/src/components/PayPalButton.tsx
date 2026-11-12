@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { api, ApiError } from '../api';
 import { Spinner } from './ui';
+import { useI18n } from '../i18n';
 
 declare global { interface Window { [k: string]: any } }
 const loaded: Record<string, Promise<void>> = {};
@@ -19,6 +20,7 @@ interface Props { mode: 'simulated' | 'sandbox'; clientId: string | null; create
 
 /** PayPal Orders v2 buttons (sandbox) or a clearly labelled simulated stand-in. */
 export function PayPalButton({ mode, clientId, createOrder, capture, label, disabled, onError }: Props) {
+  const { t } = useI18n();
   const ref = useRef<HTMLDivElement>(null);
   const [busy, setBusy] = useState(false);
   const [sdkErr, setSdkErr] = useState<string | null>(null);
@@ -52,7 +54,7 @@ export function PayPalButton({ mode, clientId, createOrder, capture, label, disa
       setBusy(true);
       try { const id = await createOrder(); await capture(id); } catch (e) { onError((e as Error).message); } finally { setBusy(false); }
     }}>
-      {busy ? <Spinner /> : null}{label} <span className="rounded bg-black/10 px-1.5 py-0.5 text-[11px] font-bold uppercase tracking-wide">simulated</span>
+      {busy ? <Spinner /> : null}{label} <span className="rounded bg-black/10 px-1.5 py-0.5 text-[11px] font-bold uppercase tracking-wide">{t('simulated')}</span>
     </button>
   );
 }
@@ -62,6 +64,7 @@ export function SubscribeButton({ mode, clientId, onDone, onError }: { mode: 'si
   const ref = useRef<HTMLDivElement>(null);
   const [busy, setBusy] = useState(false);
   const [planId, setPlanId] = useState<string | null>(null);
+  const { t } = useI18n();
   useEffect(() => {
     if (mode !== 'sandbox' || !clientId || !planId) return;
     loadSdk(clientId, 'paypal_subs', '&vault=true&intent=subscription').then(() => {
@@ -84,5 +87,5 @@ export function SubscribeButton({ mode, clientId, onDone, onError }: { mode: 'si
     } catch (e) { onError((e as Error).message); } finally { setBusy(false); }
   }
   if (planId && mode === 'sandbox') return <div ref={ref} />;
-  return (<button className="btn-primary w-full" onClick={start} disabled={busy}>{busy && <Spinner />}Approve fallback with PayPal{mode === 'simulated' && <span className="rounded bg-black/10 px-1.5 py-0.5 text-[11px] font-bold uppercase">simulated</span>}</button>);
+  return (<button className="btn-primary w-full" onClick={start} disabled={busy}>{busy && <Spinner />}{t('fb.approve')}{mode === 'simulated' && <span className="rounded bg-black/10 px-1.5 py-0.5 text-[11px] font-bold uppercase">{t('simulated')}</span>}</button>);
 }

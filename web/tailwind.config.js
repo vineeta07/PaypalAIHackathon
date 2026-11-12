@@ -6,7 +6,7 @@ export default {
   content: [path.join(dir, 'index.html'), path.join(dir, 'src/**/*.{ts,tsx}')],
   theme: {
     extend: {
-      fontFamily: { display: ['Fraunces', 'Georgia', 'serif'], sans: ['Inter', 'system-ui', 'sans-serif'] },
+      fontFamily: { display: ['Fraunces', 'Noto Serif Devanagari', 'Georgia', 'serif'], sans: ['Inter', 'Noto Sans Devanagari', 'system-ui', 'sans-serif'] },
       colors: {
         paper: 'rgb(var(--paper) / <alpha-value>)', card: 'rgb(var(--card) / <alpha-value>)', ink: 'rgb(var(--ink) / <alpha-value>)',
         muted: 'rgb(var(--muted) / <alpha-value>)', line: 'rgb(var(--line) / <alpha-value>)', accent: 'rgb(var(--accent) / <alpha-value>)',

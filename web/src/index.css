@@ -5,9 +5,9 @@
 :root { --paper: 250 248 243; --card: 255 255 255; --ink: 23 32 42; --muted: 84 94 106; --line: 228 224 214; --accent: 15 118 110; --accentsoft: 220 242 237; --warm: 180 83 9; --warmsoft: 254 243 224; --danger: 185 28 28; color-scheme: light; }
 .dark { --paper: 15 19 24; --card: 24 30 37; --ink: 236 239 241; --muted: 160 170 180; --line: 46 55 64; --accent: 45 212 191; --accentsoft: 19 56 54; --warm: 251 191 36; --warmsoft: 60 44 16; --danger: 248 113 113; color-scheme: dark; }
 html, body { background: rgb(var(--paper)); color: rgb(var(--ink)); }
-body { font-family: Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+body { font-family: Inter, 'Noto Sans Devanagari', system-ui, sans-serif; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
 .card { @apply bg-card rounded-xl2 shadow-soft border border-line/70; }
-.btn { @apply inline-flex items-center justify-center gap-2 rounded-xl min-h-[44px] px-4 font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-paper disabled:opacity-50 disabled:cursor-not-allowed; }
+.btn { @apply inline-flex items-center justify-center gap-2 text-center rounded-xl min-h-[44px] px-4 font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-paper disabled:opacity-50 disabled:cursor-not-allowed; }
 .btn-primary { @apply btn bg-accent text-white dark:text-[#06201d] hover:brightness-110; }
 .btn-ghost { @apply btn border border-line bg-card text-ink hover:bg-paper; }
 .btn-warn { @apply btn bg-warmsoft text-warm border border-warm/30 hover:brightness-95; }
@@ -17,4 +17,4 @@ body { font-family: Inter, system-ui, sans-serif; -webkit-font-smoothing: antial
 a, button, input, textarea, select { -webkit-tap-highlight-color: transparent; }
 :focus-visible { outline: 2px solid rgb(var(--accent)); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
-.ag-theme-quartz, .ag-theme-quartz-dark { --ag-font-family: Inter, system-ui, sans-serif; --ag-background-color: rgb(var(--card)); --ag-header-background-color: rgb(var(--paper)); --ag-foreground-color: rgb(var(--ink)); --ag-border-color: rgb(var(--line)); --ag-row-hover-color: rgb(var(--accentsoft)); --ag-wrapper-border-radius: 14px; }
+.ag-theme-quartz, .ag-theme-quartz-dark { --ag-font-family: Inter, 'Noto Sans Devanagari', system-ui, sans-serif; --ag-background-color: rgb(var(--card)); --ag-header-background-color: rgb(var(--paper)); --ag-foreground-color: rgb(var(--ink)); --ag-border-color: rgb(var(--line)); --ag-row-hover-color: rgb(var(--accentsoft)); --ag-wrapper-border-radius: 14px; }

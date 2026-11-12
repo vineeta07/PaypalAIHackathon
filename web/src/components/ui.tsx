@@ -26,13 +26,13 @@ export function Money({ cents, className = '', round = false }: { cents: number;
 }
 export function Spinner() { return <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-current border-r-transparent" aria-hidden="true" />; }
 
-export function ProgressRing({ value, total, size = 168 }: { value: number; total: number; size?: number }) {
+export function ProgressRing({ value, total, size = 168, label = 'repaid' }: { value: number; total: number; size?: number; label?: string }) {
   const r = (size - 18) / 2; const c = 2 * Math.PI * r; const p = total ? Math.min(1, value / total) : 0;
   return (
-    <div className="relative" style={{ width: size, height: size }} role="img" aria-label={`${Math.round(p * 100)}% repaid: ${fmt(value)} of ${fmt(total)}`}>
+    <div className="relative" style={{ width: size, height: size }} role="img" aria-label={`${Math.round(p * 100)}% ${label}: ${fmt(value)} / ${fmt(total)}`}>
       <svg width={size} height={size} className="-rotate-90"><circle cx={size / 2} cy={size / 2} r={r} stroke="rgb(var(--line))" strokeWidth="12" fill="none" />
         <motion.circle cx={size / 2} cy={size / 2} r={r} stroke="rgb(var(--accent))" strokeWidth="12" fill="none" strokeLinecap="round" strokeDasharray={c} initial={{ strokeDashoffset: c }} animate={{ strokeDashoffset: c * (1 - p) }} transition={{ duration: 0.8, ease: 'easeOut' }} /></svg>
-      <div className="absolute inset-0 flex flex-col items-center justify-center text-center"><span className="font-display text-3xl font-semibold num">{Math.round(p * 100)}%</span><span className="text-xs text-muted">repaid</span></div>
+      <div className="absolute inset-0 flex flex-col items-center justify-center text-center"><span className="font-display text-3xl font-semibold num">{Math.round(p * 100)}%</span><span className="text-xs text-muted">{label}</span></div>
     </div>
   );
 }

@@ -82,6 +82,25 @@ try {
   await p.getByText('Loan repaid 🎉', { exact: true }).waitFor();
   await shot(p, 'repaid-1440-light');
 
+  // language sweep: every page in Hindi, French and Spanish, phone and desktop
+  for (const lang of ['hi', 'fr', 'es']) {
+    for (const [w, dark] of [[360, false], [1440, lang === 'hi']]) {
+      const page = await newPage(w, dark);
+      await page.addInitScript((l) => localStorage.setItem('fl-lang', l), lang);
+      for (const r of ['/', '/borrower', '/lender', '/pay/ravi', '/ledger']) {
+        await page.goto(base + r);
+        await page.waitForLoadState('networkidle');
+        if (await overflow(page)) errors.push(`horizontal overflow at ${w}px on ${r} (${lang})`);
+        const leftovers = await page.evaluate(() => document.body.innerText.match(/\{[a-z_]+\}|\b(?:ag|fb|po|tl|led|hs|req|sim)\.[a-zA-Z_]+\b/g));
+        if (leftovers) errors.push(`untranslated placeholders on ${r} (${lang}): ${leftovers.slice(0, 3).join(', ')}`);
+        if ((r === '/borrower' && w === 360) || (r === '/lender' && w === 1440)) await shot(page, `${r.slice(1)}-${w}-${lang}`);
+      }
+      const htmlLang = await page.evaluate(() => document.documentElement.lang);
+      if (htmlLang !== lang) errors.push(`<html lang> is ${htmlLang}, expected ${lang}`);
+      await page.context().close();
+    }
+  }
+
   // responsive + dark sweep
   const routes = ['/', '/borrower', '/lender', '/pay/ravi', '/ledger'];
   for (const [w, dark] of [[390, false], [390, true], [1440, true], [360, false], [768, false], [1024, true]]) {

@@ -19,6 +19,7 @@ FairLoop lets a lender (a sister abroad, a friend, a community group) and a borr
 - Slow week? Nothing is taken. Sick? The borrower asks in their own words, the AI turns it into a structured hardship request, and the lender approves it. Terms can never get harsher automatically.
 - A **PayPal Subscriptions** safeguard stays suspended unless FairLoop sales stop for 3 weeks, so the lender is protected without anyone sending reminders.
 - An **AG Grid** ledger records every event in a verifiable hash chain.
+- The whole app works in **English, Hindi, French and Spanish**. Gemini drafts the agreement in the borrower's language, and every amount, hardship request and notification can be read in the viewer's own language.
 
 ## How we built it
 
@@ -42,11 +43,11 @@ PayPal's building blocks (Orders, Payouts, Subscriptions, Webhooks) compose into
 
 ## What's next for FairLoop
 
-PayPal Multiparty so funds never touch the platform, real accounts and invitations, Hindi and Spanish agreements, lending circles, and licensed partners for commercial lending.
+PayPal Multiparty so funds never touch the platform, real accounts and invitations, more languages (Tamil, Bengali, Swahili), lending circles, and licensed partners for commercial lending.
 
 ## Built with
 
-paypal-orders-v2 · paypal-payouts · paypal-subscriptions · paypal-js-sdk · paypal-webhooks · google-gemini · node.js · express · react · typescript · vite · tailwindcss · framer-motion · recharts · ag-grid · render · playwright
+paypal-orders-v2 · paypal-payouts · paypal-subscriptions · paypal-js-sdk · paypal-webhooks · google-gemini · node.js · express · react · typescript · vite · tailwindcss · framer-motion · recharts · ag-grid · render · playwright · i18n
 
 ---
 

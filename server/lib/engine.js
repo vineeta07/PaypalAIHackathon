@@ -135,7 +135,7 @@ export function processPayment(loanIn, { capture_id, amount_cents, week, lenderN
   w.income_cents += amount_cents;
   w.payments += 1;
   const t = loan.terms;
-  const base = { capture_id, week, amount_cents, week_total_cents: w.income_cents, lender_cents: 0, borrower_cents: amount_cents, share_bps: 0, tier: '', skipped: false, reason: '' };
+  const base = { capture_id, week, amount_cents, min_cents: t.weekly_min_income_cents, week_total_cents: w.income_cents, lender_cents: 0, borrower_cents: amount_cents, share_bps: 0, tier: '', skipped: false, reason: '' };
   let d;
   if (loan.status !== 'active') {
     d = { ...base, skipped: true, kind: 'not_active', reason: loan.status === 'repaid' ? 'Loan already repaid: the full payment goes to the borrower.' : `Loan is ${loan.status}: no deduction.` };
@@ -152,7 +152,7 @@ export function processPayment(loanIn, { capture_id, amount_cents, week, lenderN
     let why = `${tier.share_bps / 100}% of ${fmt(amount_cents)} = ${fmt(raw)}`;
     if (take < raw && take === balLeft) why += `, capped at remaining balance ${fmt(balLeft)}`;
     else if (take < raw) why += `, capped by weekly cap (${fmt(capLeft)} left of ${fmt(t.weekly_cap_cents)})`;
-    d = { ...base, kind: take > 0 ? 'deducted' : 'cap_reached', share_bps: tier.share_bps, tier: tier.label || '', lender_cents: take, borrower_cents: amount_cents - take,
+    d = { ...base, kind: take > 0 ? 'deducted' : 'cap_reached', raw_cents: raw, share_bps: tier.share_bps, tier: tier.label || '', lender_cents: take, borrower_cents: amount_cents - take,
       skipped: take === 0,
       reason: `${why} → ${fmt(take)} to ${lenderName}. Week total ${fmt(w.income_cents)}, ${tier.label || 'tier'} tier.` };
     w.deducted_cents += take;

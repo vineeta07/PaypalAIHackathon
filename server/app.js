@@ -7,7 +7,8 @@ import { appendEvent, verifyChain } from './lib/ledger.js';
 import { fmt } from './lib/money.js';
 import { isoWeek, addWeeks } from './lib/time.js';
 import { PayPalError } from './lib/paypal.js';
-import { describeHardship } from './lib/ai.js';
+import { describeHardship, summarize } from './lib/ai.js';
+import { summariesAll, normLang } from './lib/i18n.js';
 
 export function createApp({ store, paypal, ai, config = {}, staticDir = null, now = () => new Date() }) {
   const app = express();
@@ -15,7 +16,8 @@ export function createApp({ store, paypal, ai, config = {}, staticDir = null, no
   const db = () => store.get();
   const currentWeek = () => addWeeks(isoWeek(now()), db().clock_offset_weeks || 0);
   const log = (ev) => { const e = appendEvent(db().ledger, ev); return e; };
-  const notify = (to, text) => { db().notifications.unshift({ id: crypto.randomUUID(), to, text, at: now().toISOString() }); db().notifications = db().notifications.slice(0, 30); };
+  // key + vars let the client render the notification in the viewer's language; text is the English fallback.
+  const notify = (to, text, key = null, vars = {}) => { db().notifications.unshift({ id: crypto.randomUUID(), to, text, key, vars, at: now().toISOString() }); db().notifications = db().notifications.slice(0, 30); };
   const lenderName = () => db().personas.lender.name;
   const bad = (status, message) => Object.assign(new Error(message), { status, expose: true });
 
@@ -60,26 +62,26 @@ export function createApp({ store, paypal, ai, config = {}, staticDir = null, no
     };
   }
 
-  async function weeklyChecks() {
+  async function weeklyChecks(lang = 'en') {
     const d = db();
     if (!d.loan) return;
     const wk = currentWeek();
     // end of term
     const eot = E.endOfTerm(d.loan, wk);
-    if (eot.changed) { d.loan = eot.loan; log({ type: 'end_of_term', summary: eot.reason }); notify('both', eot.reason); }
+    if (eot.changed) { d.loan = eot.loan; log({ type: 'end_of_term', summary: eot.reason }); notify('both', eot.reason, eot.loan.status === 'forgiven' ? 'endForgive' : 'endReview', { amount_cents: eot.loan.forgiven_cents || 0 }); }
     // 4-week low income review
     const rv = E.needsReview(d.loan, wk);
     if (rv.due && (!d.review || d.review.status !== 'open')) {
       const opts = await ai.suggestReviewOptions({ low_weeks: rv.low_weeks, remaining: fmt(E.remaining(d.loan)), terms: d.loan.terms });
       d.review = { status: 'open', low_weeks: rv.low_weeks, options: opts.options, ai: opts.ai, approvals: { lender: null, borrower: null }, opened_at: now().toISOString() };
       log({ type: 'review_prompt', summary: `${rv.low_weeks} low-income weeks in a row: review suggested (nothing changes until both approve).` });
-      notify('both', 'Four low weeks in a row. FairLoop suggested some gentler options: have a look together.');
+      notify('both', 'Four low weeks in a row. FairLoop suggested some gentler options: have a look together.', 'review', { n: rv.low_weeks });
     }
     // diversion safeguard
-    await fallbackCheck();
+    await fallbackCheck(lang);
   }
 
-  async function fallbackCheck() {
+  async function fallbackCheck(lang = 'en') {
     const d = db();
     const fb = d.fallback;
     if (!d.loan || !fb.subscription_id || fb.status === 'CANCELLED') return;
@@ -92,9 +94,10 @@ export function createApp({ store, paypal, ai, config = {}, staticDir = null, no
       fb.status = 'CANCELLED';
       log({ type: 'fallback_cancelled', summary: 'Loan closed: fallback subscription cancelled.', ref: fb.subscription_id });
     } else if (dec.action === 'activate' && fb.status !== 'ACTIVE') {
-      const msg = await ai.checkInMessage({ borrower: d.personas.borrower.name, lender: lenderName(), fallback: fmt(d.loan.terms.fallback_weekly_cents), weeks: dec.zero_weeks || dec.low_weeks });
+      const msg = await ai.checkInMessage({ borrower: d.personas.borrower.name, lender: lenderName(), fallback_cents: d.loan.terms.fallback_weekly_cents, weeks: dec.zero_weeks || dec.low_weeks, lang });
       fb.message = msg.message;
-      notify('both', msg.message);
+      fb.message_lang = normLang(lang);
+      notify('both', msg.message, 'fallbackOn', { amount_cents: d.loan.terms.fallback_weekly_cents });
       await paypal.activateSubscription(fb.subscription_id, 'FairLoop income stopped');
       fb.status = 'ACTIVE';
       fb.activated_week = wk;
@@ -103,7 +106,7 @@ export function createApp({ store, paypal, ai, config = {}, staticDir = null, no
       await paypal.suspendSubscription(fb.subscription_id, 'FairLoop income returned');
       fb.status = 'SUSPENDED';
       log({ type: 'fallback_suspended', summary: dec.reason, ref: fb.subscription_id });
-      notify('both', 'Sales are back, so the fallback payment is paused again.');
+      notify('both', 'Sales are back, so the fallback payment is paused again.', 'fallbackOff');
     }
   }
 
@@ -136,7 +139,7 @@ export function createApp({ store, paypal, ai, config = {}, staticDir = null, no
   async function onPaidOff() {
     const d = db();
     log({ type: 'payoff', summary: `Loan repaid 🎉 ${fmt(d.loan.terms.principal_cents)} returned to ${lenderName()}. Deductions stopped.`, amount_cents: d.loan.terms.principal_cents });
-    notify('both', `Loan repaid 🎉 Ravi has paid back ${fmt(d.loan.terms.principal_cents)} in full.`);
+    notify('both', `Loan repaid 🎉 Ravi has paid back ${fmt(d.loan.terms.principal_cents)} in full.`, 'paidOff', { amount_cents: d.loan.terms.principal_cents });
     d.loan.repaid_at = now().toISOString();
     await fallbackCheck();
   }
@@ -152,11 +155,14 @@ export function createApp({ store, paypal, ai, config = {}, staticDir = null, no
     const text = String(req.body?.text || '').trim();
     if (!text) throw bad(400, 'Please describe what you need.');
     if (db().loan) throw bad(409, 'There is already a loan in progress. Reset the demo to start over.');
-    const plan = await ai.planLoan(text, db().income_history);
+    const lang = normLang(req.body?.lang);
+    const plan = await ai.planLoan(text, db().income_history, lang);
     db().request = { text, at: now().toISOString(), ...plan, terms: undefined };
     if (plan.terms) {
       db().agreement = E.newAgreement(plan.terms, { now: now().toISOString() });
       db().agreement.summary = plan.summary;
+      db().agreement.summary_lang = plan.summary_lang || lang;
+      db().agreement.summaries = summariesAll(db().agreement.terms);
       db().agreement.ai_notes = plan.notes;
       log({ type: 'agreement_drafted', actor: plan.ai === 'gemini' ? 'ai' : 'rules', summary: `Draft agreement for ${fmt(plan.terms.principal_cents)} (hash ${db().agreement.terms_hash.slice(0, 10)}…)`, amount_cents: plan.terms.principal_cents });
     }
@@ -187,8 +193,9 @@ export function createApp({ store, paypal, ai, config = {}, staticDir = null, no
     const clean = Object.fromEntries(Object.entries(changes).filter(([k]) => allowed.includes(k)));
     const summary = d.agreement.summary;
     d.agreement = E.proposeEdit(d.agreement, clean, role, { now: now().toISOString() });
-    const { summarize } = await import('./lib/ai.js');
     d.agreement.summary = summarize(d.agreement.terms) || summary;
+    d.agreement.summary_lang = 'en';
+    d.agreement.summaries = summariesAll(d.agreement.terms);
     d.agreement.affordability = ai.analyzeAffordability(d.agreement.terms, d.income_history);
     if (d.request) d.request.affordability = d.agreement.affordability;
     log({ type: 'agreement_edited', actor: role, summary: `${d.personas[role].name} proposed changes; both approvals reset (hash ${d.agreement.terms_hash.slice(0, 10)}…)` });
@@ -243,7 +250,7 @@ export function createApp({ store, paypal, ai, config = {}, staticDir = null, no
     ] });
     d.funding.payout_batch_id = p.payout_batch_id;
     log({ type: 'disbursement', summary: `${fmt(d.loan.terms.principal_cents)} sent to ${d.personas.borrower.name} via PayPal Payouts (batch ${p.payout_batch_id}).`, amount_cents: d.loan.terms.principal_cents, ref: p.payout_batch_id });
-    notify('borrower', `${fmt(d.loan.terms.principal_cents)} from ${lenderName()} is on its way to your PayPal.`);
+    notify('borrower', `${fmt(d.loan.terms.principal_cents)} from ${lenderName()} is on its way to your PayPal.`, 'funded', { amount_cents: d.loan.terms.principal_cents, lender: lenderName() });
     store.save(); res.json(view());
   }));
 
@@ -290,7 +297,7 @@ export function createApp({ store, paypal, ai, config = {}, staticDir = null, no
     const income = d.loan?.weeks[wk]?.income_cents ?? results.reduce((s, r) => s + r.amount_cents, 0);
     log({ type: 'week_closed', summary: `Week ${wk} closed (simulated): income ${fmt(income)}.`, amount_cents: income });
     d.clock_offset_weeks += 1;
-    await weeklyChecks();
+    await weeklyChecks(normLang(req.body?.lang));
     store.save(); res.json(view());
   }));
 
@@ -300,11 +307,11 @@ export function createApp({ store, paypal, ai, config = {}, staticDir = null, no
     const text = String(req.body?.text || '').trim();
     if (!d.loan || d.loan.status !== 'active') throw bad(409, 'There is no active loan.');
     if (!text) throw bad(400, 'Tell Maya what is going on.');
-    const parsed = await ai.parseHardship(text);
+    const parsed = await ai.parseHardship(text, normLang(req.body?.lang));
     const item = { id: crypto.randomUUID().slice(0, 8), text, request: parsed, status: 'pending', at: now().toISOString(), ai: parsed.ai };
     d.hardships.push(item);
     log({ type: 'hardship_request', actor: 'borrower', summary: `Hardship request: ${parsed.summary}` });
-    notify('lender', `Ravi asked: ${parsed.summary}`);
+    notify('lender', `Ravi asked: ${parsed.summary}`, 'hardshipAsked', { req: parsed });
     store.save(); res.json(view());
   }));
   app.post('/api/hardship/:id/decide', h(async (req, res) => {
@@ -316,14 +323,14 @@ export function createApp({ store, paypal, ai, config = {}, staticDir = null, no
     if (!ok) {
       item.status = 'denied';
       log({ type: 'hardship_denied', actor: 'lender', summary: `${lenderName()} declined: ${item.request.summary} Terms unchanged.` });
-      notify('borrower', `${lenderName()} couldn't agree to that change this time. Terms stay the same.`);
+      notify('borrower', `${lenderName()} couldn't agree to that change this time. Terms stay the same.`, 'hardshipDenied', { lender: lenderName() });
     } else {
       const r = E.decideHardship(d.loan, item.request, { lenderApproved: true, borrowerApproved: true, currentWeek: currentWeek() });
       if (!r.applied) throw bad(409, r.reason);
       d.loan = r.loan;
       item.status = 'approved';
       log({ type: 'hardship_approved', actor: 'lender', summary: `${lenderName()} approved: ${describeHardship(item.request)} New terms hash ${d.loan.terms_hash.slice(0, 10)}…` });
-      notify('borrower', `${lenderName()} approved: ${describeHardship(item.request)}`);
+      notify('borrower', `${lenderName()} approved: ${describeHardship(item.request)}`, 'hardshipApproved', { lender: lenderName(), req: item.request });
       if (d.loan.status === 'repaid') await onPaidOff(); else await fallbackCheck();
     }
     item.decided_at = now().toISOString();
@@ -353,7 +360,7 @@ export function createApp({ store, paypal, ai, config = {}, staticDir = null, no
   app.post('/api/ai/explain', h(async (req, res) => {
     const p = db().payments.find((x) => x.capture_id === req.body?.capture_id);
     if (!p) throw bad(404, 'Payment not found.');
-    res.json(await ai.explainDeduction(p.decision));
+    res.json(await ai.explainDeduction(p.decision, normLang(req.body?.lang)));
   }));
 
   app.post('/api/paypal/webhook', h(async (req, res) => {
