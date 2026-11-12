@@ -27,6 +27,12 @@ export const Users = (p: SVGProps<SVGSVGElement>) => (<svg {...base(p)}><circle 
 export const Card2 = (p: SVGProps<SVGSVGElement>) => (<svg {...base(p)}><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M3 10h18M7 15h4" /></svg>);
 export const Split = (p: SVGProps<SVGSVGElement>) => (<svg {...base(p)}><path d="M4 12h6l4-6h6M10 12l4 6h6M17 3l3 3-3 3M17 15l3 3-3 3" /></svg>);
 export const Pen = (p: SVGProps<SVGSVGElement>) => (<svg {...base(p)}><path d="M4 20h4L19 9l-4-4L4 16zM13.5 6.5l4 4" /></svg>);
+export const Mic = (p: SVGProps<SVGSVGElement>) => (<svg {...base(p)}><rect x="9" y="3" width="6" height="11" rx="3" /><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7" /></svg>);
+export const Volume = (p: SVGProps<SVGSVGElement>) => (<svg {...base(p)}><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4zM15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11" /></svg>);
+export const VolumeOff = (p: SVGProps<SVGSVGElement>) => (<svg {...base(p)}><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4zM16 9.5l5 5M21 9.5l-5 5" /></svg>);
+export const Trash = (p: SVGProps<SVGSVGElement>) => (<svg {...base(p)}><path d="M4.5 7h15M9.5 7V4.5h5V7M6.5 7l1 13h9l1-13M10 11v5M14 11v5" /></svg>);
+export const Download = (p: SVGProps<SVGSVGElement>) => (<svg {...base(p)}><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 19.5h14" /></svg>);
+export const Wifi = (p: SVGProps<SVGSVGElement>) => (<svg {...base(p)}><path d="M3 3l18 18M8.5 16.5a5 5 0 0 1 7 0M5 13a10 10 0 0 1 5.2-2.7M19 13a10 10 0 0 0-2.4-1.7M2 9.5a15 15 0 0 1 4.5-2.8M22 9.5A15 15 0 0 0 11 5.5M12 20h.01" /></svg>);
 export const Calendar = (p: SVGProps<SVGSVGElement>) => (<svg {...base(p)}><rect x="4" y="5" width="16" height="15" rx="2" /><path d="M4 10h16M9 3v4M15 3v4" /></svg>);
 
 export function BakeArt({ kind, className = '' }: { kind: string; className?: string }) {

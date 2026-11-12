@@ -5,14 +5,17 @@
   "type": "module",
   "license": "MIT",
   "author": "Vineeta",
-  "engines": { "node": ">=22" },
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "dev": "node scripts/dev.js",
     "build": "vite build --config web/vite.config.ts",
     "start": "node scripts/start.js",
     "test": "node --test test/*.test.js",
     "lint": "tsc -p web/tsconfig.json --noEmit && node --check server/index.js",
-    "e2e": "node scripts/e2e.js"
+    "e2e": "node scripts/e2e.js",
+    "icons": "node scripts/icons.js"
   },
   "dependencies": {
     "express": "^5.1.0"

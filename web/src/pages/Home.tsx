@@ -56,7 +56,7 @@ function Calculator() {
       <div className="p-6 sm:p-8">
         <label htmlFor="calc" className="label">{t('home.calc.income')}</label>
         <p className="mt-1 text-4xl font-semibold tracking-tight num">{fmt0(income)}</p>
-        <input id="calc" type="range" min={0} max={20000} step={500} value={income} onChange={(e) => setIncome(Number(e.target.value))} className="mt-5 w-full accent-[rgb(var(--accent))]" aria-valuetext={fmt0(income)} />
+        <input id="calc" type="range" min={0} max={20000} step={500} value={income} onChange={(e) => setIncome(Number(e.target.value))} className="mt-3 h-11 w-full cursor-pointer accent-[rgb(var(--accent))]" aria-valuetext={fmt0(income)} />
         <div className="mt-1 flex justify-between text-xs text-muted num"><span>{fmt0(0)}</span><span>{fmt0(DEMO.min)}</span><span>{fmt0(DEMO.good)}</span><span>{fmt0(20000)}</span></div>
         <p className="mt-6 text-xs text-muted">{t('home.calc.terms', { min: fmt0(DEMO.min), good: fmt0(DEMO.good), cap: fmt0(DEMO.cap) })}</p>
       </div>

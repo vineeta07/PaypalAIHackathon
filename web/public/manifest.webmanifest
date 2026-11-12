@@ -1,0 +1,26 @@
+{
+  "name": "FairLoop",
+  "short_name": "FairLoop",
+  "description": "Interest-free loans between people who trust each other, repaid automatically from what the borrower earns, through PayPal.",
+  "id": "/",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#F6F5F1",
+  "theme_color": "#166543",
+  "lang": "en",
+  "categories": ["finance", "productivity"],
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "/icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ],
+  "shortcuts": [
+    { "name": "Ravi’s dashboard", "short_name": "Ravi", "url": "/borrower", "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Maya’s dashboard", "short_name": "Maya", "url": "/lender", "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Pay Ravi", "short_name": "Pay", "url": "/pay/ravi", "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Ledger", "short_name": "Ledger", "url": "/ledger", "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] }
+  ]
+}

@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { api, fmt, fmt0, type State } from '../api';
 import { useI18n } from '../i18n';
 import { hardshipLabel, reasonText } from '../text';
+import { usePrefill } from '../agentBus';
 import { Card, Pill, ProgressRing, Bar, useAction, Feedback, Spinner, Empty, Stat } from '../components/ui';
 import { AgreementCard } from '../components/Agreement';
 import { FallbackCard, PayoutsCard, Timeline, PaidOff, Notifications } from '../components/Panels';
@@ -12,6 +13,7 @@ export function RequestCard({ s, onState, tour }: { s: State; onState: (s: State
   const { t, lang } = useI18n();
   const [edited, setEdited] = useState<string | null>(null);
   const text = edited ?? t('req.example');
+  usePrefill('request', (v) => { setEdited(v); setTimeout(() => { const el = document.getElementById('req'); el?.scrollIntoView({ block: 'center' }); (el as HTMLTextAreaElement | null)?.focus(); }, 50); });
   const act = useAction();
   const lender = s.personas.lender.name;
   return (
@@ -28,9 +30,9 @@ export function RequestCard({ s, onState, tour }: { s: State; onState: (s: State
   );
 }
 
-function HardshipDrawer({ s, onState, onClose }: { s: State; onState: (s: State) => void; onClose: () => void }) {
+function HardshipDrawer({ s, onState, onClose, initial }: { s: State; onState: (s: State) => void; onClose: () => void; initial?: string }) {
   const { t, lang } = useI18n();
-  const [text, setText] = useState(t('hs.example'));
+  const [text, setText] = useState(initial ?? t('hs.example'));
   const act = useAction();
   const lender = s.personas.lender.name;
   return (
@@ -68,6 +70,8 @@ export function SimulateWeek({ s, onState }: { s: State; onState: (s: State) => 
 export function Borrower({ s, onState }: { s: State; onState: (s: State) => void }) {
   const { t } = useI18n();
   const [hardship, setHardship] = useState(false);
+  const [hsInit, setHsInit] = useState<string | undefined>();
+  usePrefill('hardship', (v) => { setHsInit(v); setHardship(true); });
   const loan = s.loan;
   const wk = loan?.weeks[s.week];
   const pending = s.hardships.filter((h) => h.status === 'pending');
@@ -112,7 +116,7 @@ export function Borrower({ s, onState }: { s: State; onState: (s: State) => void
       {s.review?.status === 'open' && <ReviewCard s={s} role="borrower" onState={onState} />}
       {loan && <div className="grid gap-5 lg:grid-cols-2 [&>*]:min-w-0"><Timeline s={s} /><div className="min-w-0 space-y-5"><SimulateWeek s={s} onState={onState} /><PayoutsCard s={s} onState={onState} /></div></div>}
       {s.hardships.length > 0 && <HardshipList s={s} />}
-      <AnimatePresence>{hardship && <HardshipDrawer s={s} onState={onState} onClose={() => setHardship(false)} />}</AnimatePresence>
+      <AnimatePresence>{hardship && <HardshipDrawer s={s} onState={onState} initial={hsInit} onClose={() => { setHardship(false); setHsInit(undefined); }} />}</AnimatePresence>
     </div>
   );
 }

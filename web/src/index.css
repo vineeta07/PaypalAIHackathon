@@ -34,6 +34,8 @@ h1, h2, h3 { letter-spacing: -0.02em; }
   .input { @apply min-h-[44px] w-full rounded-lg border border-line bg-card px-3 text-ink placeholder:text-muted/70 focus-visible:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/30; }
 }
 .num { font-variant-numeric: tabular-nums; }
+/* iOS zooms into form fields under 16px: keep them at 16px on phones. */
+@media (max-width: 639px) { input, select, textarea { font-size: 16px !important; } }
 .mono { font-family: 'Geist Mono', ui-monospace, monospace; }
 a, button, input, textarea, select { -webkit-tap-highlight-color: transparent; }
 :focus-visible { outline: 2px solid rgb(var(--accent)); outline-offset: 2px; }

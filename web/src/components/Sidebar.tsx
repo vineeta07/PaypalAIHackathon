@@ -3,7 +3,8 @@ import type { State } from '../api';
 import { useI18n, LANGS, type Lang } from '../i18n';
 import { progress } from '../guide';
 import { Pill } from './ui';
-import { Logo, Home, Heart, Store, List, Sun, Moon, Refresh, Compass, Check, Globe, Avatar, Book } from './Icons';
+import { Logo, Home, Heart, Store, List, Sun, Moon, Refresh, Compass, Check, Globe, Avatar, Book, Download } from './Icons';
+import { useInstall } from '../pwa';
 
 export const NAV = [
   { to: '/', key: 'nav.overview', short: 'nav.overview', icon: Book, end: true },
@@ -43,6 +44,7 @@ export function ThemeToggle({ dark, setDark, compact = false }: { dark: boolean;
 export function Sidebar({ s, dark, setDark, onReset, onTour, onNavigate }: { s: State | null; dark: boolean; setDark: (d: boolean) => void; onReset: () => void; onTour: () => void; onNavigate?: () => void }) {
   const { t } = useI18n();
   const nav = useNavigate();
+  const install = useInstall();
   const steps = s ? progress(s) : [];
   const required = steps.filter((x) => !x.optional);
   const done = required.filter((x) => x.done).length;
@@ -91,6 +93,8 @@ export function Sidebar({ s, dark, setDark, onReset, onTour, onNavigate }: { s: 
 
       <div className="mt-auto space-y-3" data-tour="settings">
         <button onClick={() => { onTour(); onNavigate?.(); }} className="btn-ghost w-full !justify-start"><Compass width={16} height={16} />{t('nav.tour')}</button>
+        {install.canInstall && <button onClick={() => install.prompt()} className="btn-ghost w-full !justify-start" data-testid="install"><Download width={16} height={16} />{t('pwa.install')}</button>}
+        {!install.canInstall && install.ios && !install.installed && <p className="rounded-lg border border-line bg-card px-3 py-2 text-xs text-muted"><Download width={13} height={13} className="mr-1 inline" />{t('pwa.ios')}</p>}
         <p className="eyebrow px-2">{t('nav.section.settings')}</p>
         <LangSelect id="lang-side" />
         <ThemeToggle dark={dark} setDark={setDark} />

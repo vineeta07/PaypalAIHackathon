@@ -5,6 +5,7 @@ import { createApp } from './app.js';
 import { createStore } from './lib/store.js';
 import { createPayPalClient, createSimulatedPayPal } from './lib/paypal.js';
 import { createAI } from './lib/ai.js';
+import { createAgent } from './lib/agent.js';
 import { seed } from './seed.js';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -15,9 +16,10 @@ const paypal = env.PAYPAL_CLIENT_ID && env.PAYPAL_CLIENT_SECRET
   ? createPayPalClient({ clientId: env.PAYPAL_CLIENT_ID, clientSecret: env.PAYPAL_CLIENT_SECRET, base: env.PAYPAL_API_BASE || 'https://api-m.sandbox.paypal.com' })
   : createSimulatedPayPal();
 const ai = createAI({ apiKey: env.GEMINI_API_KEY, model: env.GEMINI_MODEL || 'gemini-3.6-flash' });
+const agent = createAgent({ apiKey: env.GEMINI_API_KEY, model: env.GEMINI_MODEL || 'gemini-3.6-flash' });
 const store = createStore(env.DATA_FILE || path.join(root, 'data', 'db.json'), seed);
 const staticDir = path.join(root, 'dist');
-const app = createApp({ store, paypal, ai, staticDir: fs.existsSync(staticDir) ? staticDir : null, config: { paypalClientId: env.PAYPAL_CLIENT_ID, webhookId: env.PAYPAL_WEBHOOK_ID } });
+const app = createApp({ store, paypal, ai, agent, staticDir: fs.existsSync(staticDir) ? staticDir : null, config: { paypalClientId: env.PAYPAL_CLIENT_ID, webhookId: env.PAYPAL_WEBHOOK_ID } });
 
 process.on('unhandledRejection', (e) => console.error('Unhandled rejection:', e));
 const port = Number(env.PORT || 3000);

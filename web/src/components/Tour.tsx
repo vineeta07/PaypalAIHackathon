@@ -16,6 +16,7 @@ const STEPS: { route: string | null; target?: string }[] = [
   { route: '/pay/ravi', target: 'pay-products' },
   { route: '/ledger', target: 'ledger' },
   { route: null, target: 'settings' },
+  { route: null, target: 'assistant' },
   { route: null },
 ];
 const KEY = 'fl-tour';
@@ -50,7 +51,7 @@ function TourPrompt({ onStart, onLater }: { onStart: () => void; onLater: () => 
   const { t } = useI18n();
   return (
     <motion.div role="dialog" aria-labelledby="tp-t" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 12 }}
-      className="card fixed bottom-24 right-4 z-50 w-[calc(100%-2rem)] max-w-sm p-4 shadow-pop lg:bottom-6 lg:right-6">
+      className="card fixed bottom-[calc(140px+env(safe-area-inset-bottom))] right-4 z-50 w-[calc(100%-2rem)] max-w-sm p-4 shadow-pop lg:bottom-24 lg:right-6">
       <div className="flex gap-3">
         <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accentsoft text-accent"><Compass width={18} height={18} /></span>
         <div className="min-w-0 flex-1"><p id="tp-t" className="font-semibold">{t('tour.prompt.t')}</p><p className="mt-0.5 text-sm text-muted">{t('tour.prompt.b')}</p>
@@ -132,7 +133,7 @@ function TourOverlay({ step, setStep, onEnd }: { step: number; setStep: (n: numb
   else if (!rect) pos = { left: (vw - W) / 2, top: vh / 2 - 110, width: W };
   else if (rect.left + rect.width + W + 24 < vw && rect.width < 320) pos = { left: rect.left + rect.width + 16, top: Math.min(Math.max(16, rect.top), vh - 240), width: W };
   else if (rect.top + rect.height + 230 < vh) pos = { left: Math.min(Math.max(16, rect.left), vw - W - 16), top: rect.top + rect.height + 12, width: W };
-  else if (rect.top > 240) pos = { left: Math.min(Math.max(16, rect.left), vw - W - 16), top: rect.top - 12, transform: 'translateY(-100%)', width: W };
+  else if (rect.top > 240) pos = { left: Math.min(Math.max(16, rect.left + rect.width - W), vw - W - 16), bottom: vh - rect.top + 12, width: W };
   else pos = { left: (vw - W) / 2, bottom: 24, width: W };
 
   return createPortal(

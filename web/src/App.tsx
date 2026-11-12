@@ -13,6 +13,9 @@ import { NextStep } from './components/NextStep';
 import { TourProvider, useTour } from './components/Tour';
 import { Logo, Menu, Close, Avatar } from './components/Icons';
 import { Spinner } from './components/ui';
+import { Assistant } from './components/Assistant';
+import { useOnline } from './pwa';
+import { Wifi } from './components/Icons';
 
 function useTheme() {
   const [dark, setDark] = useState(() => document.documentElement.classList.contains('dark'));
@@ -27,6 +30,7 @@ function Shell() {
   const [err, setErr] = useState<string | null>(null);
   const [dark, setDark] = useTheme();
   const [drawer, setDrawer] = useState(false);
+  const online = useOnline();
   const loc = useLocation();
   const load = useCallback(() => api('/api/state').then(setS).catch((e) => setErr(e.message)), []);
   useEffect(() => { load(); }, [load]);
@@ -49,7 +53,7 @@ function Shell() {
 
       <header className="sticky top-0 z-30 flex items-center gap-2 border-b border-line bg-paper/90 px-3 py-2 backdrop-blur lg:hidden">
         <button className="btn-quiet !min-h-[44px] !px-2.5" onClick={() => setDrawer(true)} aria-label={t('nav.menu')} aria-expanded={drawer}><Menu /></button>
-        <Link to="/" className="flex items-center gap-2 text-accent" aria-label={t('home')}><Logo width={26} height={26} /><span className="text-base font-semibold tracking-tight text-ink">FairLoop</span></Link>
+        <Link to="/" className="flex min-h-[44px] items-center gap-2 text-accent" aria-label={t('home')}><Logo width={26} height={26} /><span className="text-base font-semibold tracking-tight text-ink">FairLoop</span></Link>
         <div className="ml-auto flex items-center gap-1" data-tour="settings">
           <div className="w-[118px]"><LangSelect id="lang-top" /></div>
           <ThemeToggle dark={dark} setDark={setDark} compact />
@@ -69,6 +73,7 @@ function Shell() {
       </AnimatePresence>
 
       <main id="main" className="mx-auto max-w-[1180px] px-4 pb-28 pt-6 sm:px-6 lg:px-10 lg:pb-12 lg:pt-8">
+        {!online && <p role="status" className="mb-4 flex items-center gap-2 rounded-lg border border-warm/25 bg-warmsoft px-3 py-2 text-sm text-warm"><Wifi width={16} height={16} className="shrink-0" />{t('pwa.offline')}</p>}
         {err && <p role="alert" className="card p-4 text-danger">{err} <button className="btn-ghost ml-2" onClick={() => { setErr(null); load(); }}>{t('retry')}</button></p>}
         {!s && !err && <p className="flex items-center gap-2 text-muted"><Spinner />{t('loading')}</p>}
         {s && (
@@ -82,6 +87,8 @@ function Shell() {
           </Routes>
         )}
       </main>
+
+      <Assistant s={s} onState={setS} />
 
       <nav aria-label={t('nav.roles')} data-tour="nav" className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-5 border-t border-line bg-card/95 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden">
         {NAV.map((n) => (

@@ -9,8 +9,9 @@ import { isoWeek, addWeeks } from './lib/time.js';
 import { PayPalError } from './lib/paypal.js';
 import { describeHardship, summarize } from './lib/ai.js';
 import { summariesAll, normLang } from './lib/i18n.js';
+import { createAgent } from './lib/agent.js';
 
-export function createApp({ store, paypal, ai, config = {}, staticDir = null, now = () => new Date() }) {
+export function createApp({ store, paypal, ai, agent = createAgent({}), config = {}, staticDir = null, now = () => new Date() }) {
   const app = express();
   app.use(express.json({ limit: '100kb' }));
   const db = () => store.get();
@@ -147,7 +148,7 @@ export function createApp({ store, paypal, ai, config = {}, staticDir = null, no
   const h = (fn) => async (req, res, next) => { try { await fn(req, res); } catch (e) { next(e); } };
 
   // ---------- routes ----------
-  app.get('/api/health', (req, res) => res.json({ ok: true, paypal: paypal.mode, ai: ai.enabled ? 'gemini' : 'offline' }));
+  app.get('/api/health', (req, res) => res.json({ ok: true, paypal: paypal.mode, ai: ai.enabled ? 'gemini' : 'offline', agent: agent.enabled ? 'gemini' : 'offline' }));
   app.get('/api/state', (req, res) => res.json(view()));
   app.post('/api/reset', h(async (req, res) => { store.reset(); log({ type: 'reset', summary: 'Demo reset and reseeded.' }); store.save(); res.json(view()); }));
 
@@ -363,6 +364,40 @@ export function createApp({ store, paypal, ai, config = {}, staticDir = null, no
     res.json(await ai.explainDeduction(p.decision, normLang(req.body?.lang)));
   }));
 
+  // ---------- voice / text assistant ----------
+  function serverNext(d) {
+    const a = d.agreement;
+    if (!a) return ['request', 'borrower'];
+    if (!a.active && !d.loan) return a.approvals.borrower && !a.approvals.lender ? ['approveLender', 'lender'] : a.approvals.lender && !a.approvals.borrower ? ['approveBorrower', 'borrower'] : ['approveBoth', 'borrower'];
+    if (!['SUSPENDED', 'ACTIVE', 'CANCELLED'].includes(d.fallback.status)) return ['safeguard', 'borrower'];
+    if (!d.loan) return ['fund', 'lender'];
+    if (d.loan.status !== 'active') return ['repaid', 'ledger'];
+    if (d.hardships.some((x) => x.status === 'pending')) return ['hardship', 'lender'];
+    if (d.review?.status === 'open') return ['review', 'borrower'];
+    if (!d.payments.length) return ['sale', 'pay'];
+    return ['explore', 'borrower'];
+  }
+  function agentContext(page) {
+    const d = db();
+    const wk = currentWeek();
+    const w = d.loan?.weeks[wk];
+    const [next_step, next_page] = serverNext(d);
+    const paused = d.loan ? E.isPaused(d.loan.terms, wk) : false;
+    return {
+      page, lender: d.personas.lender.name, borrower: d.personas.borrower.name, has_agreement: !!d.agreement,
+      loan: d.loan ? { status: d.loan.status, principal_cents: d.loan.terms.principal_cents, repaid_cents: d.loan.repaid_cents, remaining_cents: E.remaining(d.loan), paused_until: paused ? d.loan.terms.paused_until : null } : null,
+      week: d.loan ? { week: wk, income_cents: w?.income_cents || 0, deducted_cents: w?.deducted_cents || 0, min_cents: d.loan.terms.weekly_min_income_cents, cap_cents: d.loan.terms.weekly_cap_cents, paused } : null,
+      fallback_status: d.fallback.status, pending_hardships: d.hardships.filter((x) => x.status === 'pending').length,
+      next_step, next_page,
+      recent: d.payments.slice(-10).reverse().map((p) => ({ product: p.product, amount: `$${(p.amount_cents / 100).toFixed(2)}`, to_lender: `$${(p.decision.lender_cents / 100).toFixed(2)}`, week: p.week, reason: p.decision.reason })),
+    };
+  }
+  app.post('/api/agent', h(async (req, res) => {
+    const { text, lang, page, history } = req.body || {};
+    const out = await agent.ask({ text: String(text || '').slice(0, 1000), lang, history: Array.isArray(history) ? history.slice(-6) : [] }, agentContext(typeof page === 'string' ? page.slice(0, 40) : null));
+    res.json(out);
+  }));
+
   app.post('/api/paypal/webhook', h(async (req, res) => {
     if (!config.webhookId || paypal.mode !== 'sandbox') return res.json({ ignored: true });
     const ok = await paypal.verifyWebhook({ headers: req.headers, event: req.body, webhookId: config.webhookId });
@@ -377,6 +412,9 @@ export function createApp({ store, paypal, ai, config = {}, staticDir = null, no
   }));
 
   if (staticDir && fs.existsSync(staticDir)) {
+    // The service worker and manifest must never be cached long, or app updates would not reach installed users.
+    app.get('/sw.js', (req, res) => { res.set({ 'Cache-Control': 'no-cache', 'Service-Worker-Allowed': '/' }); res.type('application/javascript').sendFile(path.join(staticDir, 'sw.js')); });
+    app.get('/manifest.webmanifest', (req, res) => { res.set('Cache-Control', 'no-cache'); res.type('application/manifest+json').sendFile(path.join(staticDir, 'manifest.webmanifest')); });
     app.use(express.static(staticDir, { index: false, maxAge: '1h' }));
     app.get(/^(?!\/api\/).*/, (req, res) => res.sendFile(path.join(staticDir, 'index.html')));
   }
