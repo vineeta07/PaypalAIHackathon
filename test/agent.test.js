@@ -19,6 +19,9 @@ test('detects the language the person spoke', () => {
   assert.equal(detectLang('Combien reste-t-il à rembourser ?'), 'fr');
   assert.equal(detectLang('¿Cuánto queda por pagar?'), 'es');
   assert.equal(detectLang('ok', 'fr'), 'fr', 'falls back to the app language');
+  assert.equal(detectLang('¿Qué hago ahora?'), 'es', 'Spanish question with é is still Spanish');
+  assert.equal(detectLang('Qu’est-ce que je dois faire ?'.replace('’', "'")), 'fr');
+  assert.equal(detectLang('Où en est le prêt ?'), 'fr');
 });
 
 test('offline agent answers balance questions in the speaker’s language', () => {

@@ -12,11 +12,15 @@ const MODES = ['low', 'normal', 'good', 'zero'];
 
 // ---------- language detection ----------
 export function detectLang(text, fallback = 'en') {
-  const s = ` ${String(text).toLowerCase().replace(/[?!.,;:]/g, ' ')} `;
+  const rawText = String(text).toLowerCase();
+  // Marks unique to one language count strongly; shared letters like é do not decide.
+  const strongEs = (rawText.match(/[ñ¿¡]/g) || []).length * 3;
+  const strongFr = (rawText.match(/[èêàçœ]|qu'|c'est|est-ce|j'/g) || []).length * 3;
+  const s = ` ${rawText.replace(/[?!.,;:¿¡«»"“”]/g, ' ')} `;
   if (/[ऀ-ॿ]/.test(s)) return 'hi';
   const count = (re) => (s.match(re) || []).length;
-  const fr = count(/[éèêàçùœ]| je | j'| le | les | est | combien | reste | mon | ma | pour | semaine | montre | ouvre | aller | où | quoi | suis | malade | prêt | ça | c'est /g);
-  const es = count(/[ñ¿¡áíóú]| el | los | las | es | cuánto | cuanto | queda | mi | para | semana | muestra | abre | ir | dónde | qué | estoy | enfermo | préstamo | necesito | puedo /g);
+  const fr = strongFr + count(/ je | le | les | est | combien | reste | mon | ma | pour | semaine | montre | ouvre | aller | où | quoi | suis | malade | prêt | ça | merci | bonjour /g);
+  const es = strongEs + count(/[áíóú]| el | los | las | es | cuánto | cuanto | queda | mi | para | semana | muestra | abre | ir | dónde | qué | que | hago | estoy | enfermo | préstamo | necesito | puedo | hola | gracias /g);
   const en = count(/ the | is | how | what | my | show | open | go | where | i | much | left | week | can | need | sick | next /g);
   const best = Math.max(fr, es, en);
   if (best === 0) return normLang(fallback);

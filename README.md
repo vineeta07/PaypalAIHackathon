@@ -50,7 +50,7 @@ A lender (a family member, friend, community group or seller platform) and a bor
 | **Agreement + payoff projection** | **Maya's dashboard in Hindi (dark)** | **Hash-chained ledger (AG Grid)** |
 | ![Agreement](docs/screenshots/agreement-1440-light.png) | ![Lender dashboard in Hindi](docs/screenshots/lender-1440-hi.png) | ![Ledger](docs/screenshots/ledger-1440-dark.png) |
 
-More, at phone and desktop sizes in light and dark mode and in every language, are in [`docs/screenshots/`](docs/screenshots/).
+More, at phone and desktop sizes in light and dark mode and in every language, are in [`docs/screenshots/`](docs/screenshots/). A 15-image, 3:2 presentation gallery (used on Devpost) is in [`docs/gallery/`](docs/gallery/), generated from the live app by `npm run gallery`.
 
 ## Try it in 2 minutes
 
